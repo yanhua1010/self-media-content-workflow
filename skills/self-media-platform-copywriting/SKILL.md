@@ -1,6 +1,6 @@
 ---
 name: self-media-platform-copywriting
-description: 将已确认的母题、证据和创作简报写成平台原生内容。用于 X 短帖、长帖或线程，小红书图文，微信公众号文章，视频号或抖音发布文案，以及同一母题的多平台适配。强调各平台独立设计标题、开头、证据顺序、结构和行动，不做机械缩写或共享正文式的一稿多发。
+description: 将已确认的母题、证据和创作简报写成平台原生内容。用于 X 短帖、长帖或线程，小红书图文，微信公众号文章，视频号、抖音或小红书视频发布文案，YouTube 标题、描述、章节、标签和缩略图方案，以及同一母题的多平台适配。强调各平台独立设计标题、开头、证据顺序、结构和行动，不做机械缩写或共享正文式的一稿多发。
 ---
 
 # 平台文案
@@ -29,6 +29,7 @@ description: 将已确认的母题、证据和创作简报写成平台原生内�
 - 小红书：[xiaohongshu.md](references/xiaohongshu.md)
 - 微信公众号：[wechat.md](references/wechat.md)
 - 视频号、抖音和小红书视频：[short-video-platforms.md](references/short-video-platforms.md)
+- YouTube：[youtube.md](references/youtube.md)
 - 视觉风格库：[visual-styles.md](references/visual-styles.md)
 - 合规：[compliance.md](references/compliance.md)
 

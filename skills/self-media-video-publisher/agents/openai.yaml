@@ -1,0 +1,4 @@
+interface:
+  display_name: "视频发布"
+  short_description: "把已确认的视频成片按平台整理发布包，经逐平台授权后上传为私密、草稿或定时，不自动群发"
+  default_prompt: "使用 $self-media-video-publisher 把这条视频的各平台版本整理成发布包，并告诉我每个平台可以用哪种方式发布。"

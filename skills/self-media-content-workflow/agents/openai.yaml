@@ -1,4 +1,4 @@
 interface:
   display_name: "自媒体内容工作流"
-  short_description: "编排选题、创作、视觉、数字人视频、发布、交付与数据复盘的通用工作流"
-  default_prompt: "使用 $self-media-content-workflow 完成从选题到发布复盘的自媒体内容任务；需要时走数字人视频制片分支。"
+  short_description: "编排选题、创作、视觉、数字人与动画视频、多平台视频发布、交付与数据复盘的通用工作流"
+  default_prompt: "使用 $self-media-content-workflow 完成从选题到发布复盘的自媒体内容任务；需要时走数字人或动画解说视频制片分支，并派生 YouTube、抖音、视频号、小红书版本。"

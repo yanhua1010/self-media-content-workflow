@@ -6,7 +6,7 @@
 
 [简体中文](README.md) | **English**
 
-A modular, tool-agnostic suite of agent skills for social-media content operations: from a vague idea to a confirmed brief, account strategy, trend and competitor research, platform-native copy, short-video packages, optional digital-human production, WeChat draft publishing, performance reviews, and verified delivery — the full content loop.
+A modular, tool-agnostic suite of agent skills for social-media content operations: from a vague idea to a confirmed brief, account strategy, trend and competitor research, platform-native copy, short-video packages, optional digital-human and animated-explainer production, multi-platform video publishing (YouTube, Douyin, WeChat Channels, Xiaohongshu), WeChat draft publishing, performance reviews, and verified delivery — the full content loop.
 
 - **Tool-agnostic** — no binding to a specific model, browser, image, video, publishing, or analytics service; capabilities are discovered from the running environment
 - **Platform-native** — one topic shares facts and evidence, while titles, openings, structure, and calls to action are designed per platform
@@ -29,6 +29,7 @@ graph TD
     W --> A["content-analytics<br/>Analytics"]
     W --> D["content-delivery<br/>Delivery"]
     W --> P["wechat-publisher<br/>WeChat publishing"]
+    W --> U["video-publisher<br/>Video publishing"]
 ```
 
 | Skill | Responsibility |
@@ -37,11 +38,12 @@ graph TD
 | [`self-media-content-brief`](skills/self-media-content-brief/SKILL.md) | Audience, goal, evidence, angle, tone, and constraints |
 | [`self-media-content-strategy`](skills/self-media-content-strategy/SKILL.md) | Positioning, content mix, series, topic pool, and calendar |
 | [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | Trend tracking, keyword research, competitor teardowns, and original topics |
-| [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | Native copy for X, Xiaohongshu, WeChat, and short-video platforms, plus the visual style library |
-| [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | Hooks, spoken script, storyboard, captions, shoot plan, and optional digital-human production |
+| [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | Native copy for X, Xiaohongshu, WeChat, short-video platforms, and YouTube, plus the visual style library |
+| [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | Hooks, spoken script, storyboard, captions, shoot plan, optional digital-human and animated-explainer production, and landscape/vertical platform versions |
 | [`self-media-content-analytics`](skills/self-media-content-analytics/SKILL.md) | Data quality, comparable baselines, attribution, decisions, and experiments |
 | [`self-media-content-delivery`](skills/self-media-content-delivery/SKILL.md) | Milestone files, versions, path verification, and publishing packages |
 | [`self-media-wechat-publisher`](skills/self-media-wechat-publisher/SKILL.md) | WeChat formatting, image upload, draft creation, and image-message posts |
+| [`self-media-video-publisher`](skills/self-media-video-publisher/SKILL.md) | Per-platform video publish packs; with per-platform authorization, uploads to YouTube, Douyin, WeChat Channels, and Xiaohongshu as private, draft, or scheduled |
 
 ## Quick start
 
@@ -49,7 +51,7 @@ graph TD
 
 **Claude Code (recommended, no Node.js required)**
 
-Run these two commands inside Claude Code to install all 9 skills at once:
+Run these two commands inside Claude Code to install all 10 skills at once:
 
 ```text
 /plugin marketplace add yanhua1010/self-media-content-workflow
@@ -64,7 +66,7 @@ Run these two commands inside Claude Code to install all 9 skills at once:
 Use the official [skills CLI](https://github.com/vercel-labs/skills) (requires Node.js):
 
 ```bash
-# Install all 9 skills into the current project
+# Install all 10 skills into the current project
 npx skills add yanhua1010/self-media-content-workflow
 
 # Install into the user-global skill directory
@@ -133,7 +135,7 @@ The validator checks skill frontmatter, directory consistency, core-file length,
 ## Repository layout
 
 ```text
-skills/                   # 9 independently installable skills
+skills/                   # 10 independently installable skills
 ├── <skill>/SKILL.md      #   core workflow (≤ 500 lines)
 ├── <skill>/references/   #   detailed platform guidance
 └── <skill>/assets/       #   copyable output templates
