@@ -1,4 +1,4 @@
 interface:
-  display_name: "短视频脚本"
-  short_description: "将母题转成可拍摄或可生成的口播、分镜、字幕、封面与发布字段"
-  default_prompt: "使用 $self-media-short-video 把这个母题做成短视频方案；如果我明确选择数字人，并确认已在数字人平台手动准备好素材，再进入数字人制片。"
+  display_name: "短视频与视频制片"
+  short_description: "将母题转成可拍摄或可生成的口播、分镜、字幕、封面与发布字段，支持数字人、动画解说和横竖屏多平台版本"
+  default_prompt: "使用 $self-media-short-video 把这个母题做成短视频方案；如果我明确选择数字人，并确认已在数字人平台手动准备好素材，再进入数字人制片；如果我要动画解说成片，按动画解说制片并派生各平台版本。"

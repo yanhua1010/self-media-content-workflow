@@ -37,8 +37,9 @@ jobs:
             self-media-short-video \
             self-media-content-analytics \
             self-media-content-delivery \
-            self-media-wechat-publisher
+            self-media-wechat-publisher \
+            self-media-video-publisher
           do
             test -f "$HOME/.claude/skills/$name/SKILL.md" || { echo "missing $name"; exit 1; }
           done
-          echo "All 9 skills installed."
+          echo "All 10 skills installed."

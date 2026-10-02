@@ -6,7 +6,7 @@
 
 **简体中文** | [English](README.en.md)
 
-一套通用、模块化的自媒体内容生产与经营 Agent Skills：从模糊需求到创作简报、账号策略、热点与竞品研究、平台原生文案、短视频方案、数字人视频制片、公众号排版发布、数据复盘和交付归档，覆盖内容生产的完整闭环。
+一套通用、模块化的自媒体内容生产与经营 Agent Skills：从模糊需求到创作简报、账号策略、热点与竞品研究、平台原生文案、短视频方案、数字人与动画解说视频制片、YouTube 与抖音视频号小红书多平台视频发布、公众号排版发布、数据复盘和交付归档，覆盖内容生产的完整闭环。
 
 - **工具无关** — 不绑定特定模型、浏览器、图片、视频、发布或数据服务，运行时自动发现当前环境的可用能力
 - **平台原生** — 同一母题共享事实与证据，为每个平台分别设计标题、开头、结构和行动
@@ -29,6 +29,7 @@ graph TD
     W --> A["content-analytics<br/>数据复盘"]
     W --> D["content-delivery<br/>交付归档"]
     W --> P["wechat-publisher<br/>公众号发布"]
+    W --> U["video-publisher<br/>视频发布"]
 ```
 
 | Skill | 职责 |
@@ -37,11 +38,12 @@ graph TD
 | [`self-media-content-brief`](skills/self-media-content-brief/SKILL.md) | 澄清目标、受众、证据、角度和约束 |
 | [`self-media-content-strategy`](skills/self-media-content-strategy/SKILL.md) | 账号定位、内容配比、栏目、选题池和内容日历 |
 | [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | 热点追踪、关键词研究、竞品拆解和原创选题 |
-| [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | X、小红书、公众号和短视频平台原生文案，含配图风格库 |
-| [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | 钩子、口播、分镜、字幕、拍摄方案和可选数字人制片 |
+| [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | X、小红书、公众号、短视频平台和 YouTube 原生文案，含配图风格库 |
+| [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | 钩子、口播、分镜、字幕、拍摄方案，可选数字人制片和动画解说制片，横竖屏多平台版本 |
 | [`self-media-content-analytics`](skills/self-media-content-analytics/SKILL.md) | 数据质量、基线比较、归因、决策和实验 |
 | [`self-media-content-delivery`](skills/self-media-content-delivery/SKILL.md) | 里程碑保存、版本、路径核验和完整发布包 |
 | [`self-media-wechat-publisher`](skills/self-media-wechat-publisher/SKILL.md) | 公众号排版、图片上传、草稿箱写入和小绿书图片消息 |
+| [`self-media-video-publisher`](skills/self-media-video-publisher/SKILL.md) | 视频逐平台发布包，经逐平台授权后上传 YouTube、抖音、视频号、小红书为私密、草稿或定时 |
 
 ## 快速开始
 
@@ -49,7 +51,7 @@ graph TD
 
 **Claude Code 用户（推荐，无需 Node.js）**
 
-在 Claude Code 中依次执行两条命令，一次装齐全部 9 个 Skill：
+在 Claude Code 中依次执行两条命令，一次装齐全部 10 个 Skill：
 
 ```text
 /plugin marketplace add yanhua1010/self-media-content-workflow
@@ -64,7 +66,7 @@ graph TD
 使用官方 [skills CLI](https://github.com/vercel-labs/skills)（需要 Node.js）：
 
 ```bash
-# 安装全部 9 个 Skill 到当前项目
+# 安装全部 10 个 Skill 到当前项目
 npx skills add yanhua1010/self-media-content-workflow
 
 # 安装到用户全局目录
@@ -133,7 +135,7 @@ python3 scripts/validate.py
 ## 仓库结构
 
 ```text
-skills/                   # 9 个可独立安装的 Skill
+skills/                   # 10 个可独立安装的 Skill
 ├── <skill>/SKILL.md      #   核心流程（≤ 500 行）
 ├── <skill>/references/   #   平台细则与详细规范
 └── <skill>/assets/       #   可复制的输出模板
@@ -144,7 +146,7 @@ scripts/validate.py       # 仓库结构校验
 
 ## 设计取舍
 
-- 一个总控负责路由与状态，八个模块各承担单一职责
+- 一个总控负责路由与状态，九个模块各承担单一职责
 - 采集和发布作为运行时适配层，不绑定厂商实现
 - 多平台共享事实与证据，但分别重写标题、开头、结构和行动
 - 平台限制可能变化，需要精确值时以官方说明或发布界面为准

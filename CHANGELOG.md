@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
+- Add an optional, provider-neutral animated-explainer production path for narrated videos without on-camera presenters: story beats, synthetic voice selection, visual anchor, composition, licensed-music mixing with ducking, loudness checks, and fallbacks.
+- Add multi-platform video versioning: one master, derived landscape/vertical versions (native re-layout or wrapped vertical with hook title and burned-in captions), SRT captions, per-platform covers, safe areas, music attribution, and AI-labeling fields, plus a release-matrix template.
+- Add YouTube platform copywriting guidance (titles, thumbnails, descriptions with chapters, tags, captions, audience and synthetic-content settings) and add YouTube to platform selection and delivery checklists.
+- Add `self-media-video-publisher`: per-platform publish packs and tiered publishing (manual pack, form-fill helper, private/draft upload, scheduled) with per-platform authorization, adapter discovery (official YouTube Data API, form-fill extensions, browser-automation uploaders), and credential boundaries.
 - Add an optional, provider-neutral digital-human video production path with likeness/voice rights checks, user-managed sensitive-asset uploads, third-party data-processing review, presenter generation, visual composition, captions, 9:16 checks, quality gates, and privacy-safe delivery metadata.
 
 ## 0.1.0 - 2026-07-22

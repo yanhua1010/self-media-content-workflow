@@ -1,6 +1,6 @@
 ---
 name: self-media-content-workflow
-description: 通用自媒体内容生产与经营工作流。用于自媒体内容创作、选题策划、热点或竞品研究、多平台改写、短视频脚本、数字人视频、发布包、公众号草稿、内容数据分析、周复盘、月复盘和继续未完成任务。负责识别请求类型，调用创作简报、内容策略、热点竞品、平台文案、短视频、数据复盘和交付归档模块，并管理方向确认、标题确认、终稿确认和发布授权。
+description: 通用自媒体内容生产与经营工作流。用于自媒体内容创作、选题策划、热点或竞品研究、多平台改写、短视频脚本、数字人视频、动画解说视频、YouTube 与抖音视频号小红书多平台视频发布、发布包、公众号草稿、内容数据分析、周复盘、月复盘和继续未完成任务。负责识别请求类型，调用创作简报、内容策略、热点竞品、平台文案、短视频与视频制片、视频发布、数据复盘和交付归档模块，并管理方向确认、标题确认、终稿确认和发布授权。
 ---
 
 # 自媒体内容工作流
@@ -41,7 +41,8 @@ description: 通用自媒体内容生产与经营工作流。用于自媒体内�
 | 单篇或多平台创作 | `self-media-content-brief` → `self-media-platform-copywriting` | 创作简报和平台原生稿 |
 | 账号定位、选题池、栏目、内容日历 | `self-media-content-strategy` | 策略、选题池、栏目和排期 |
 | 热点追踪、关键词研究、竞品拆解 | `self-media-trend-radar` | 研究报告和原创选题 |
-| 口播、分镜、字幕、拍摄方案、数字人视频 | `self-media-short-video` | 可拍摄短视频包；用户明确选择数字人、确认肖像与声音权利，并在所选平台手动上传和选定素材后，可进入数字人制片和成片交付 |
+| 口播、分镜、字幕、拍摄方案、数字人视频、动画解说视频 | `self-media-short-video` | 可拍摄短视频包；用户明确选择数字人、确认肖像与声音权利，并在所选平台手动上传和选定素材后，可进入数字人制片和成片交付；用户要无真人出镜的动画成片且制片能力可用时，进入动画解说制片，并派生横竖屏多平台版本 |
+| 视频上传、多平台同步发布、YouTube 私密上传或定时 | `self-media-video-publisher` | 逐平台发布包；逐平台授权后上传为私密、草稿或定时，结果写回任务卡 |
 | 单篇、周度或月度数据复盘 | `self-media-content-analytics` | 归因、决策和待验证实验 |
 | 保存、版本、发布包和归档 | `self-media-content-delivery` | 已核验文件和内容索引 |
 | 公众号排版、草稿箱写入、小绿书图片消息 | `self-media-wechat-publisher` | 已排版并核对的公众号草稿 |
@@ -92,7 +93,7 @@ description: 通用自媒体内容生产与经营工作流。用于自媒体内�
 
 读取 [platforms.md](references/platforms.md)，推荐一个主平台和最多两个扩展平台。说明每个平台的作用、产物和时间成本。
 
-读取 [preflight-and-registry.md](references/preflight-and-registry.md)。只检查已选平台的写作、图片、视频原片或录屏、数字人敏感素材与平台就绪、视频合成与字幕、草稿和数据能力。其中数字人敏感素材与平台就绪、视频合成与字幕仅在视频制作模式为数字人制片时检查；其他内容类型和真人出镜、素材解析任务将这两项标记为不适用，不因此进入 `AWAITING_USER`。能力不可用时，给出手动发布包等降级方案。数字人制作的权利确认、手动上传、第三方数据处理、生成、合成和验收边界见 [digital-human-production.md](references/digital-human-production.md)。
+读取 [preflight-and-registry.md](references/preflight-and-registry.md)。只检查已选平台的写作、图片、视频原片或录屏、数字人敏感素材与平台就绪、视频合成与字幕、草稿和数据能力。其中动画制片管线和配乐授权仅在视频制作模式为动画解说制片时检查，视频上传仅在用户希望由工作流上传视频时检查；数字人敏感素材与平台就绪、视频合成与字幕仅在视频制作模式为数字人制片时检查；其他内容类型和真人出镜、素材解析任务将这两项标记为不适用，不因此进入 `AWAITING_USER`。能力不可用时，给出手动发布包等降级方案。数字人制作的权利确认、手动上传、第三方数据处理、生成、合成和验收边界见 [digital-human-production.md](references/digital-human-production.md)。
 
 ### 4. 生成平台原生初稿
 
@@ -109,6 +110,8 @@ description: 通用自媒体内容生产与经营工作流。用于自媒体内�
 选定风格写入任务卡视觉锚，再建立“文案到画面”映射。软件或产品内容有真实界面素材时使用真实素材，没有时使用场景或隐喻，不虚构产品 UI。
 
 视频调用 `self-media-short-video`。默认没有原片时交付脚本、分镜、字幕、封面和发布字段。用户明确选择数字人制片时，必须先确认肖像与声音权利，并由用户本人在 Topview 或所选数字人平台中手动上传、创建和选定数字人及声音；本工作流不上传原始头像或录音。用户确认平台素材已就绪后，才调用可用适配器生成讲解片段，再合成画面解析、字幕和人物窗口，最后按目标平台核验比例、时长、声音、字幕和人物裁切。涉及付费生成时遵守运行时工具的费用确认规则。
+
+用户要无真人出镜的动画解说成片（科普、历史、品牌故事）时，按 `self-media-short-video` 的动画解说制片规范执行：脚本与事实确认、音色试听选定、视觉锚确认后再批量生成素材和渲染。音乐只用本地合成、平台音乐库或用户持有授权的曲目，并记录署名要求。主版本完成后派生各平台版本（YouTube 16:9 加 SRT 字幕，抖音、视频号、小红书 9:16 烧录字幕），记录到发布矩阵。
 
 ### 6. 质量审校
 
@@ -127,7 +130,7 @@ description: 通用自媒体内容生产与经营工作流。用于自媒体内�
 
 调用 `self-media-content-delivery` 保存里程碑产物并回读验证。只向用户报告已确认存在且非空的文件。
 
-完整读取 [publishing-and-review.md](references/publishing-and-review.md)。公众号草稿在用户授权后优先调用 `self-media-wechat-publisher` 排版并写入草稿箱；该模块或其依赖不可用时交付手动发布包。任何平台都不直接群发。
+完整读取 [publishing-and-review.md](references/publishing-and-review.md)。公众号草稿在用户授权后优先调用 `self-media-wechat-publisher` 排版并写入草稿箱；该模块或其依赖不可用时交付手动发布包。视频成片调用 `self-media-video-publisher`：先交付逐平台发布包，用户逐平台授权后再按授权级别填表、私密上传或定时发布。任何平台都不直接群发。
 
 ### 8. 数据复盘和风格学习
 
@@ -166,5 +169,7 @@ description: 通用自媒体内容生产与经营工作流。用于自媒体内�
 - 发布和复盘：[publishing-and-review.md](references/publishing-and-review.md)
 - 风格学习：[style-learning.md](references/style-learning.md)
 - 数字人视频制作：[digital-human-production.md](references/digital-human-production.md)
+- 动画解说制片：[animated-explainer-production.md](../self-media-short-video/references/animated-explainer-production.md)
+- 视频多平台版本：[video-platform-versions.md](../self-media-short-video/references/video-platform-versions.md)
 - 任务卡：[content-task-template.md](assets/content-task-template.md)
 - 内容注册表：[content-registry-template.md](assets/content-registry-template.md)
