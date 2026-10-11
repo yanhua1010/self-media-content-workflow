@@ -45,6 +45,8 @@ graph TD
 | [`self-media-wechat-publisher`](skills/self-media-wechat-publisher/SKILL.md) | WeChat formatting, image upload, draft creation, and image-message posts |
 | [`self-media-video-publisher`](skills/self-media-video-publisher/SKILL.md) | Per-platform video publish packs; with per-platform authorization, uploads to YouTube, Douyin, WeChat Channels, and Xiaohongshu as private, draft, or scheduled |
 
+Video publishing can use the [SAU adapter](skills/self-media-video-publisher/references/sau-adapter.md) and dependency-free `publish.mjs` to preview each platform's upload plan.
+
 ## Quick start
 
 ### Install
