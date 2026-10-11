@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Features
 
+- Add a source-checked social-auto-upload adapter and Node publish script for per-platform video packs, with dry-run planning, confirmation, private/draft defaults, and post-upload records.
 - Add explainer narrative and style guidance distilled from high-performing text-led science explainers: second-person or motif hooks, a central question within 15 seconds, an early title card, visible progress devices, an emotional peak with a concrete person, callback endings, one-idea-per-line writing rules, family visual style, visual route choice (procedural motion graphics, illustration, or mixed), slow ambient score selection, and an optional subtitle-only (no voice) format.
 - Add an optional, provider-neutral animated-explainer production path for narrated videos without on-camera presenters: story beats, synthetic voice selection, visual anchor, composition, licensed-music mixing with ducking, loudness checks, and fallbacks.
 - Add multi-platform video versioning: one master, derived landscape/vertical versions (native re-layout or wrapped vertical with hook title and burned-in captions), SRT captions, per-platform covers, safe areas, music attribution, and AI-labeling fields, plus a release-matrix template.

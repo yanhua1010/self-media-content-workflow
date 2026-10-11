@@ -45,6 +45,8 @@ graph TD
 | [`self-media-wechat-publisher`](skills/self-media-wechat-publisher/SKILL.md) | 公众号排版、图片上传、草稿箱写入和小绿书图片消息 |
 | [`self-media-video-publisher`](skills/self-media-video-publisher/SKILL.md) | 视频逐平台发布包，经逐平台授权后上传 YouTube、抖音、视频号、小红书为私密、草稿或定时 |
 
+视频发布可选用 [SAU 适配器](skills/self-media-video-publisher/references/sau-adapter.md)和无依赖的 `publish.mjs` 先预览逐平台上传计划。
+
 ## 快速开始
 
 ### 安装
