@@ -13,6 +13,7 @@ uv venv --python 3.12
 source .venv/bin/activate
 uv pip install -e .
 PLAYWRIGHT_DOWNLOAD_HOST="https://npmmirror.com/mirrors/playwright" patchright install chromium
+uv pip install playwright   # 2026-10 的主线 pyproject 漏了它，百家号上传器仍 import playwright
 cp conf.example.py conf.py
 sau --help
 ```
