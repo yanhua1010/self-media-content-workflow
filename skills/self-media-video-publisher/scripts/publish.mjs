@@ -14,15 +14,15 @@ const platforms = {
 };
 
 function usage() {
-  throw new Error('用法: node publish.mjs --episode <dir> --platforms douyin,weixin,xhs,youtube [--mode draft|schedule] [--at "YYYY-MM-DD HH:mm"] [--sau <binary>] [--account <名称>] [--dry-run] [--yes]');
+  throw new Error('用法: node publish.mjs --episode <dir> --platforms douyin,weixin,xhs,youtube [--mode draft|schedule] [--at "YYYY-MM-DD HH:mm"] [--sau <binary>] [--account <名称>] [--dry-run] [--yes] [--headed]');
 }
 
 function parseArgs(argv) {
-  const options = { mode: 'draft', sau: 'sau', dryRun: false, yes: false, account: 'default' };
+  const options = { mode: 'draft', sau: 'sau', dryRun: false, yes: false, headed: false, account: 'default' };
   for (let index = 0; index < argv.length; index += 1) {
     const key = argv[index];
-    if (key === '--dry-run' || key === '--yes') {
-      options[key === '--dry-run' ? 'dryRun' : 'yes'] = true;
+    if (key === '--dry-run' || key === '--yes' || key === '--headed') {
+      options[key === '--dry-run' ? 'dryRun' : key === '--yes' ? 'yes' : 'headed'] = true;
     } else if (['--episode', '--platforms', '--mode', '--at', '--sau', '--account'].includes(key)) {
       if (!argv[index + 1] || argv[index + 1].startsWith('--')) usage();
       options[key.slice(2)] = argv[++index];
@@ -124,10 +124,13 @@ function command(pack, options) {
     args.push('--thumbnail', pack.cover, '--visibility', 'private');
     if (pack.playlist) args.push('--playlist', pack.playlist);
   }
+  if (options.headed) args.push('--headed');
   return args;
 }
 
 function status(pack, options) {
+  // 2026-10-13：小红书自动发布后账号被平台警告，小红书一律手动发，脚本拒绝执行
+  if (pack.platform === 'xhs') return '拒绝执行：小红书不走自动化（2026-10-13 账号曾因自动发布被警告），请按发布包在创作中心手动发';
   // 抖音、小红书在 SAU 里没有草稿/私密参数：draft 模式拒绝；schedule 模式属于工作流的 L3（用户明确给出平台、视频、时间并逐平台确认后，到点自动公开）。
   if (['douyin', 'xhs'].includes(pack.platform) && options.mode === 'draft') return 'SAU 无草稿/私密参数，拒绝执行（改用 --mode schedule --at 做 L3 定时）';
   if (['douyin', 'xhs'].includes(pack.platform) && options.mode === 'schedule') return '可执行（L3 定时，到点自动公开，需逐平台确认）';
@@ -184,18 +187,20 @@ async function main() {
   if (options.dryRun) {
     for (const pack of packs) {
       console.log(`\n${pack.platform}: ${status(pack, options)}`);
-      if (status(pack, options) === '可执行' || options.mode === 'schedule') {
+      if (!status(pack, options).includes('拒绝执行') && (status(pack, options) === '可执行' || options.mode === 'schedule')) {
         console.log([options.sau, ...command(pack, options)].map(quote).join(' '));
       } else console.log('无安全的 SAU 上传命令');
     }
     return;
   }
-  if (packs.some((pack) => status(pack, options).includes('拒绝执行'))) {
-    throw new Error('所选平台包含 SAU 无法安全创建草稿或私密视频的平台；只能 dry-run 预览，实际上传请只选视频号/YouTube');
+  for (const pack of packs.filter((pack) => status(pack, options).includes('拒绝执行'))) {
+    console.error(`${pack.platform}: 跳过。${status(pack, options)}`);
   }
+  const runnable = packs.filter((pack) => !status(pack, options).includes('拒绝执行'));
+  if (!runnable.length) throw new Error('没有可自动执行的平台');
   const rl = createInterface({ input: stdin, output: stdout });
   try {
-    for (const pack of packs) {
+    for (const pack of runnable) {
       const autoPublic = ['douyin', 'xhs'].includes(pack.platform) && options.mode === 'schedule';
       if (!options.yes || autoPublic) {
         // L3 定时（到点自动公开）永远逐平台人工确认，--yes 不能跳过
@@ -205,6 +210,9 @@ async function main() {
       const result = await runSau(options.sau, command(pack, options));
       if (result.code !== 0) {
         console.error(`${pack.platform}: SAU 失败（退出码 ${result.code}）。请在本机查看 SAU 输出并核对草稿状态。`);
+        const tail = `${result.out}\n${result.err}`.trim().split('\n').filter(Boolean).slice(-12).join('\n');
+        if (tail) console.error(`--- SAU 输出（末 12 行）---\n${tail}\n---`);
+        console.error(`已停止：${pack.platform} 之后的平台未执行，修复后用 --platforms 单独重跑。`);
         break;
       }
       const level = ['douyin', 'xhs'].includes(pack.platform) ? 'L3 定时发布' : 'L2 私密上传或草稿';

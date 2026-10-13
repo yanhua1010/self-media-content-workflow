@@ -2,6 +2,8 @@
 
 本适配器按 SAU 仓库 `dreammis/social-auto-upload` 的主线源码与文档核对，网页所示 HEAD 为 `0012d2c355f88f683cc38dde2a2db209e14091bc`（2026-09-02）。本环境无法完成指定的本地克隆，因此该哈希来自 [GitHub 提交页](https://github.com/dreammis/social-auto-upload/commit/0012d2c355f88f683cc38dde2a2db209e14091bc)，未能用本地 `git rev-parse HEAD` 复核。参数依据 [sau_cli.py](https://github.com/dreammis/social-auto-upload/blob/0012d2c355f88f683cc38dde2a2db209e14091bc/sau_cli.py)、[安装说明](https://github.com/dreammis/social-auto-upload/blob/0012d2c355f88f683cc38dde2a2db209e14091bc/docs/install.md) 和 [pyproject.toml](https://github.com/dreammis/social-auto-upload/blob/0012d2c355f88f683cc38dde2a2db209e14091bc/pyproject.toml)。
 
+> 2026-10-13 更新：小红书浏览器自动化发布会触发平台风控（实际账号在一次 SAU 定时发布后收到警告）。`publish.mjs` 对 `xhs` 固定返回「拒绝执行」并跳过，小红书改为按发布包手动上传。下文关于小红书 `--schedule` 的说明仅作历史记录。
+
 ## macOS 安装与一次性登录
 
 SAU 要求 Python `>=3.10,<3.13`；官方安装说明推荐 `uv`、虚拟环境、可编辑安装和 Patchright Chromium。目标安装目录为 `/Users/xiademacbookpro/tools/social-auto-upload`，在有网络及该目录写权限的本机终端执行：
