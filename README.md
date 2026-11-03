@@ -4,60 +4,60 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.1.0-informational)](CHANGELOG.md)
 
-**简体中文** | [English](README.en.md)
+**English** | [简体中文](README.zh-CN.md)
 
-一套通用、模块化的自媒体内容生产与经营 Agent Skills：从模糊需求到创作简报、账号策略、热点与竞品研究、平台原生文案、短视频方案、数字人与动画解说视频制片、YouTube 与抖音视频号小红书多平台视频发布、公众号排版发布、数据复盘和交付归档，覆盖内容生产的完整闭环。
+A modular, tool-agnostic suite of agent skills for social-media content operations: from a vague idea to a confirmed brief, account strategy, trend and competitor research, platform-native copy, short-video packages, optional digital-human and animated-explainer production, multi-platform video publishing (YouTube, Douyin, WeChat Channels, Xiaohongshu), WeChat draft publishing, performance reviews, and verified delivery — the full content loop.
 
-- **工具无关** — 不绑定特定模型、浏览器、图片、视频、发布或数据服务，运行时自动发现当前环境的可用能力
-- **平台原生** — 同一母题共享事实与证据，为每个平台分别设计标题、开头、结构和行动
-- **人工在环** — 方向、平台、标题、终稿、发布授权五个强制确认点，默认只产出草稿或发布包，从不自动群发
-- **证据优先** — 关键数字必须有来源，区分事实、判断、推断与建议，不编造数据、体验和收益
-- **视觉体系化** — 内置 8 套配图风格预设与平台路由，先选风格再出图，同组不混用，账号偏好优先于预设默认值
+- **Tool-agnostic** — no binding to a specific model, browser, image, video, publishing, or analytics service; capabilities are discovered from the running environment
+- **Platform-native** — one topic shares facts and evidence, while titles, openings, structure, and calls to action are designed per platform
+- **Human-in-the-loop** — five mandatory approval gates (direction, platforms, title, final copy, publishing); drafts and publishing packages by default, never automatic broadcasting
+- **Evidence-first** — every key number needs a source; facts, opinions, inferences, and advice stay separated; no fabricated data, experience, or results
+- **Systematic visuals** — eight built-in image-style presets with platform routing; a style is chosen before generation, one style per image set, and account preferences override preset defaults
 
-数字人制片中，头像与声音素材由用户在了解所选服务商当前数据处理条款后，亲自在该平台上传、创建并选定。任务文件、注册表和仓库不保存原始头像或录音、其本机路径、临时链接及平台私有标识，只索引数字人生成片段、最终视频、字幕文件等交付物的路径。
+For digital-human production, the user must personally upload and select likeness and voice assets in the chosen provider after reviewing its current data-processing terms. Task files, registries, and the repository must not store the original portrait or recording, their local paths, temporary links, or provider-private identifiers; they only index paths of deliverables such as generated clips, final videos, and caption files.
 
-## 架构
+## Architecture
 
 ```mermaid
 graph TD
-    W["self-media-content-workflow<br/>总控：路由 · 状态 · 确认点"]
-    W --> B["content-brief<br/>创作简报"]
-    W --> S["content-strategy<br/>内容策略"]
-    W --> R["trend-radar<br/>热点与竞品"]
-    W --> C["platform-copywriting<br/>平台文案"]
-    W --> V["short-video<br/>短视频"]
-    W --> A["content-analytics<br/>数据复盘"]
-    W --> D["content-delivery<br/>交付归档"]
-    W --> P["wechat-publisher<br/>公众号发布"]
-    W --> U["video-publisher<br/>视频发布"]
+    W["self-media-content-workflow<br/>Orchestrator: routing · state · approvals"]
+    W --> B["content-brief<br/>Creative brief"]
+    W --> S["content-strategy<br/>Strategy"]
+    W --> R["trend-radar<br/>Trends & competitors"]
+    W --> C["platform-copywriting<br/>Platform copy"]
+    W --> V["short-video<br/>Short video"]
+    W --> A["content-analytics<br/>Analytics"]
+    W --> D["content-delivery<br/>Delivery"]
+    W --> P["wechat-publisher<br/>WeChat publishing"]
+    W --> U["video-publisher<br/>Video publishing"]
 ```
 
-| Skill | 职责 |
+| Skill | Responsibility |
 |---|---|
-| [`self-media-content-workflow`](skills/self-media-content-workflow/SKILL.md) | 请求路由、状态管理、确认点和端到端编排 |
-| [`self-media-content-brief`](skills/self-media-content-brief/SKILL.md) | 澄清目标、受众、证据、角度和约束 |
-| [`self-media-content-strategy`](skills/self-media-content-strategy/SKILL.md) | 账号定位、内容配比、栏目、选题池和内容日历 |
-| [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | 热点追踪、关键词研究、竞品拆解和原创选题，可选海外对照模式 |
-| [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | X、小红书、公众号、短视频平台和 YouTube 原生文案，含配图风格库 |
-| [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | 钩子、口播、分镜、字幕、拍摄方案，可选数字人制片和动画解说制片，横竖屏多平台版本 |
-| [`self-media-content-analytics`](skills/self-media-content-analytics/SKILL.md) | 数据质量、基线比较、归因、决策和实验 |
-| [`self-media-content-delivery`](skills/self-media-content-delivery/SKILL.md) | 里程碑保存、版本、路径核验和完整发布包 |
-| [`self-media-wechat-publisher`](skills/self-media-wechat-publisher/SKILL.md) | 公众号排版、图片上传、草稿箱写入和小绿书图片消息 |
-| [`self-media-video-publisher`](skills/self-media-video-publisher/SKILL.md) | 视频逐平台发布包，经逐平台授权后上传 YouTube、抖音、视频号、小红书为私密、草稿或定时 |
+| [`self-media-content-workflow`](skills/self-media-content-workflow/SKILL.md) | Request routing, state management, approvals, and end-to-end orchestration |
+| [`self-media-content-brief`](skills/self-media-content-brief/SKILL.md) | Audience, goal, evidence, angle, tone, and constraints |
+| [`self-media-content-strategy`](skills/self-media-content-strategy/SKILL.md) | Positioning, content mix, series, topic pool, and calendar |
+| [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | Trend tracking, keyword research, competitor teardowns, and original topics, with an optional overseas comparison mode |
+| [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | Native copy for X, Xiaohongshu, WeChat, short-video platforms, and YouTube, plus the visual style library |
+| [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | Hooks, spoken script, storyboard, captions, shoot plan, optional digital-human and animated-explainer production, and landscape/vertical platform versions |
+| [`self-media-content-analytics`](skills/self-media-content-analytics/SKILL.md) | Data quality, comparable baselines, attribution, decisions, and experiments |
+| [`self-media-content-delivery`](skills/self-media-content-delivery/SKILL.md) | Milestone files, versions, path verification, and publishing packages |
+| [`self-media-wechat-publisher`](skills/self-media-wechat-publisher/SKILL.md) | WeChat formatting, image upload, draft creation, and image-message posts |
+| [`self-media-video-publisher`](skills/self-media-video-publisher/SKILL.md) | Per-platform video publish packs; with per-platform authorization, uploads to YouTube, Douyin, WeChat Channels, and Xiaohongshu as private, draft, or scheduled |
 
-视频发布可选用 [SAU 适配器](skills/self-media-video-publisher/references/sau-adapter.md)和无依赖的 `publish.mjs` 先预览逐平台上传计划。
+Video publishing can use the [SAU adapter](skills/self-media-video-publisher/references/sau-adapter.md) and dependency-free `publish.mjs` to preview each platform's upload plan.
 
-热点雷达的[海外对照模式](skills/self-media-trend-radar/references/overseas-compare.md)用无依赖的 Python 脚本，对比同一话题在 X、YouTube、Reddit 与小红书、抖音、B站的近期互动热度，找出两侧冷热差明显的选题。数据通过 [AIsa](https://aisa.one) 的 REST API 获取，一个 API key 覆盖 6 个平台，每个话题单次约 $0.03，运行前先报价。<!-- 替换为 Dub 推荐链接后保留下一行披露 -->
+The trend radar's [overseas comparison mode](skills/self-media-trend-radar/references/overseas-compare.md) is a dependency-free Python script that compares recent engagement for the same topic on X, YouTube and Reddit against Xiaohongshu, Douyin and Bilibili, and flags topics with a clear gap between the two sides. Data comes from the [AIsa](https://aisa.one) REST API: one API key covers all six platforms, a run costs about $0.03 per topic, and every run is quoted first.<!-- replace with the Dub referral link and keep the disclosure below -->
 
-> 披露：上面的 AIsa 链接为推荐链接，通过该链接注册并付费，作者会获得佣金，你的价格不变。
+> Disclosure: the AIsa link above is a referral link. If you sign up and pay through it, the author earns a commission at no extra cost to you.
 
-## 快速开始
+## Quick start
 
-### 安装
+### Install
 
-**Claude Code 用户（推荐，无需 Node.js）**
+**Claude Code (recommended, no Node.js required)**
 
-在 Claude Code 中依次执行两条命令，一次装齐全部 10 个 Skill：
+Run these two commands inside Claude Code to install all 10 skills at once:
 
 ```text
 /plugin marketplace add yanhua1010/self-media-content-workflow
@@ -67,116 +67,117 @@ graph TD
 /plugin install self-media-suite@self-media
 ```
 
-**其他 Agent（Codex、Cursor 等）**
+**Other agents (Codex, Cursor, and more)**
 
-使用官方 [skills CLI](https://github.com/vercel-labs/skills)（需要 Node.js）：
+Use the official [skills CLI](https://github.com/vercel-labs/skills) (requires Node.js):
 
 ```bash
-# 安装全部 10 个 Skill 到当前项目
+# Install all 10 skills into the current project
 npx skills add yanhua1010/self-media-content-workflow
 
-# 安装到用户全局目录
+# Install into the user-global skill directory
 npx skills add yanhua1010/self-media-content-workflow -g
 ```
 
-按需选装模块，或用 `-a` 指定目标 Agent：
+Install a subset with `--skill <name>`, and target specific agents with `-a`:
 
 ```bash
 npx skills add yanhua1010/self-media-content-workflow --skill self-media-content-workflow -a claude-code
 ```
 
-### 第一个任务
+### First task
 
-从总控 Skill 开始，它会自动路由到需要的模块：
-
-```text
-使用 $self-media-content-workflow，把这段产品失败经历做成小红书和公众号内容。
-```
-
-也可以直接调用单个模块：
+Start from the orchestrator; it routes to the modules it needs:
 
 ```text
-使用 $self-media-content-strategy，为一个新账号建立选题池和一个月内容日历。
-
-使用 $self-media-trend-radar，研究最近一个月 AI 编程内容的高频问题。
-
-使用 $self-media-content-analytics，分析这 10 篇内容并找出下一轮唯一实验。
+Use $self-media-content-workflow to turn this product-failure story into an X thread and a Xiaohongshu carousel.
 ```
 
-> Skill 的具体引用语法以所用 Agent 为准。
-
-## 工作流
+Modules can also be invoked directly:
 
 ```text
-需求澄清 → 方向确认* → 研究与证据 → 平台确认* → 发布预检
-→ 平台原生初稿 → 标题确认* → 素材生成（真人/数字人） → 质量审校
-→ 终稿确认* → 发布授权* → 草稿或发布包 → 数据复盘
+Use $self-media-content-strategy to build a topic pool and a one-month calendar for a new account.
+
+Use $self-media-trend-radar to research the most-asked questions about AI coding content in the last month.
+
+Use $self-media-content-analytics to review these 10 posts and identify the single next experiment.
 ```
 
-`*` 为强制人工确认点。终稿确认不等于发布授权：Skill 默认只创建草稿或手动发布包，不直接群发。
+> The exact skill-invocation syntax depends on your agent.
 
-素材生成前，工作流从[配图风格库](skills/self-media-platform-copywriting/references/visual-styles.md)按内容类型和平台推荐 2 到 3 套风格供选择，账号已有稳定偏好时直接沿用。
+## Workflow
 
-## 安全边界
+```text
+Clarify → Direction approval* → Research & evidence → Platform approval* → Preflight
+→ Platform-native draft → Title approval* → Assets (live-action / digital human) → Quality gates
+→ Final-copy approval* → Publishing authorization* → Draft or publishing package → Review
+```
 
-- 不使用主账号登录态自动采集竞品
-- 不自动点赞、评论、关注、私信或发布
-- 不在任务卡、日志或仓库保存 Cookie、Token 和 Secret
-- 数字人头像、肖像和声音必须有使用权利；由用户本人在所选平台手动上传和选定，并在上传前了解平台当前的数据处理条款
-- 任务卡、内容注册表和仓库不保存原始头像、录音及其本机路径、临时链接或数字人平台私有标识，只记录生成片段、成片和字幕等交付物的索引路径；按目标平台确认必要的 AI/数字人披露
-- 验证码、限流和平台风控出现时立即停止
-- 近期产品、价格、版本和平台规则优先核验官方来源
-- 不编造数据、体验、收益、用户评价和测试结果
+`*` marks a mandatory human approval gate. Final-copy approval is not publishing authorization: skills create drafts or manual publishing packages by default and never broadcast.
 
-完整安全策略见 [SECURITY.md](SECURITY.md)。
+Before assets are generated, the workflow recommends 2-3 styles from the [visual style library](skills/self-media-platform-copywriting/references/visual-styles.md) based on content type and platform, or reuses the account's established preference.
 
-## 校验
+## Safety boundaries
+
+- No automated competitor scraping with a creator's primary account session
+- No automatic likes, comments, follows, DMs, or publishing
+- No cookies, tokens, or secrets in task cards, logs, or the repository
+- Digital-human portraits, likenesses, and voices must have confirmed usage rights; the user personally uploads and selects them in the chosen provider after reviewing its current data-processing terms
+- No original portraits or recordings, their local paths, temporary links, or digital-human provider-private identifiers in task cards, content registries, or the repository — only index paths of deliverables such as generated clips, final videos, and captions; confirm the required AI/digital-human disclosures per target platform
+- Stop immediately on CAPTCHAs, rate limits, or platform risk controls
+- Verify recent products, prices, versions, and platform rules against official sources
+- Never invent data, experience, revenue, user feedback, or test results
+
+See [SECURITY.md](SECURITY.md) for the full policy.
+
+## Validation
 
 ```bash
 python3 scripts/validate.py
 ```
 
-校验器检查 Skill frontmatter、目录一致性、核心文件行数、UI 元数据、相对链接和未处理的 TODO，无第三方依赖。海外对照脚本的单元测试：
+The validator checks skill frontmatter, directory consistency, core-file length, UI metadata, relative links, and unresolved TODOs, with no third-party dependencies. CI runs the structural validation and the overseas comparison unit tests on every push, and performs a real installation test with the official skills CLI.
+
+To run the overseas comparison unit tests on their own:
 
 ```bash
 python3 -m unittest discover -s skills/self-media-trend-radar/scripts
 ```
-CI 在每次提交时运行结构校验，并用官方 skills CLI 执行一次真实安装测试。
 
-## 仓库结构
+## Repository layout
 
 ```text
-skills/                   # 10 个可独立安装的 Skill
-├── <skill>/SKILL.md      #   核心流程（≤ 500 行）
-├── <skill>/references/   #   平台细则与详细规范
-├── <skill>/assets/       #   可复制的输出模板
-└── <skill>/scripts/      #   可选脚本（视频发布、海外对照）
-scripts/validate.py       # 仓库结构校验
-.claude-plugin/           # Claude Code plugin 与 marketplace 清单
-.github/workflows/        # 结构校验 + 安装测试
+skills/                   # 10 independently installable skills
+├── <skill>/SKILL.md      #   core workflow (≤ 500 lines)
+├── <skill>/references/   #   detailed platform guidance
+├── <skill>/assets/       #   copyable output templates
+└── <skill>/scripts/      #   optional scripts (video publishing, overseas comparison)
+scripts/validate.py       # repository validation
+.claude-plugin/           # Claude Code plugin and marketplace manifests
+.github/workflows/        # structural validation + install test
 ```
 
-## 设计取舍
+## Design decisions
 
-- 一个总控负责路由与状态，九个模块各承担单一职责
-- 采集和发布作为运行时适配层，不绑定厂商实现
-- 多平台共享事实与证据，但分别重写标题、开头、结构和行动
-- 平台限制可能变化，需要精确值时以官方说明或发布界面为准
+- One orchestrator owns routing and state; eight modules each own a single responsibility
+- Collection and publishing are runtime adapter layers, never vendor-bound
+- Platforms share facts and evidence while titles, openings, structure, and actions are rewritten per platform
+- Platform limits change; exact values defer to official documentation or the publishing interface
 
-## 贡献
+## Contributing
 
-欢迎 Issue 和 Pull Request。提交前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)，并运行 `python3 scripts/validate.py`。版本记录见 [CHANGELOG.md](CHANGELOG.md)。
+Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and run `python3 scripts/validate.py` before submitting. See [CHANGELOG.md](CHANGELOG.md) for release history.
 
-## 免责声明
+## Disclaimer
 
-本项目是一套内容创作辅助 Skills，按「现状」提供，不附带任何明示或默示的担保。使用前请注意：
+This project is a content-creation assistance Skill suite, provided "as is" without warranty of any kind, express or implied. Before using it:
 
-- **平台规则以官方为准。** 仓库中的平台规范、发布流程和运营建议均为编写时的经验总结，平台规则随时可能调整。需要精确值时，请以平台官方公告和当前发布界面为准。
-- **账号操作风险自担。** 本项目涉及公众号草稿写入等真实账号操作。因使用本项目而导致的账号限流、封禁、内容删除、数据丢失或其他损失，作者不承担责任。
-- **凭据由你自己保管。** 本项目不收集、不传输、不存储任何凭据。`WECHAT_APP_ID`、`WECHAT_APP_SECRET` 等敏感信息仅通过你本地的环境变量提供，请勿写入任何会被提交或分享的文件。
-- **内容合规由发布者负责。** 仓库提供的合规检查清单不构成法律意见。所发布内容是否符合《中华人民共和国广告法》等法律法规及各平台社区规范，由发布者自行判断并承担责任。
-- **不保证效果。** 本项目不对内容的阅读量、涨粉、转化或收益作任何承诺。
+- **Official platform rules prevail.** Platform conventions, publishing flows, and operational advice in this repository reflect experience at the time of writing, and platform rules can change at any time. When an exact value matters, defer to official announcements and the current publishing interface.
+- **Account operations are at your own risk.** This project performs real account operations, such as writing WeChat Official Account drafts. The author is not liable for rate limiting, account suspension, content removal, data loss, or any other damages arising from use of this project.
+- **You control your own credentials.** This project does not collect, transmit, or store credentials. Secrets such as `WECHAT_APP_ID` and `WECHAT_APP_SECRET` are supplied only through your local environment variables — never write them into any file that could be committed or shared.
+- **Content compliance is the publisher's responsibility.** The compliance checklists here are not legal advice. Whether your published content complies with applicable advertising and content laws, and with each platform's community guidelines, is yours to judge and to answer for.
+- **No results are guaranteed.** This project makes no promise regarding reach, follower growth, conversion, or revenue.
 
-## 许可证
+## License
 
 [MIT](LICENSE)
