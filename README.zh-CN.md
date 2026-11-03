@@ -47,7 +47,7 @@ graph TD
 
 视频发布可选用 [SAU 适配器](skills/self-media-video-publisher/references/sau-adapter.md)和无依赖的 `publish.mjs` 先预览逐平台上传计划。
 
-热点雷达的[海外对照模式](skills/self-media-trend-radar/references/overseas-compare.md)用无依赖的 Python 脚本，对比同一话题在 X、YouTube、Reddit 与小红书、抖音、B站的近期互动热度，找出两侧冷热差明显的选题。数据通过 [AIsa](https://aisa.one) 的 REST API 获取，一个 API key 覆盖 6 个平台，每个话题单次约 $0.03，运行前先报价。<!-- 替换为 Dub 推荐链接后保留下一行披露 -->
+热点雷达的[海外对照模式](skills/self-media-trend-radar/references/overseas-compare.md)用无依赖的 Python 脚本，对比同一话题在 X、YouTube、Reddit 与小红书、抖音、B站的近期互动热度，找出两侧冷热差明显的选题。数据通过 [AIsa](https://go.aisa.one/yanhua) 的 REST API 获取，一个 API key 覆盖 6 个平台，每个话题单次约 $0.03，运行前先报价。
 
 > 披露：上面的 AIsa 链接为推荐链接，通过该链接注册并付费，作者会获得佣金，你的价格不变。
 
