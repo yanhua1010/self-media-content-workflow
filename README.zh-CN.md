@@ -37,8 +37,8 @@ graph TD
 | [`self-media-content-workflow`](skills/self-media-content-workflow/SKILL.md) | 请求路由、状态管理、确认点和端到端编排 |
 | [`self-media-content-brief`](skills/self-media-content-brief/SKILL.md) | 澄清目标、受众、证据、角度和约束 |
 | [`self-media-content-strategy`](skills/self-media-content-strategy/SKILL.md) | 账号定位、内容配比、栏目、选题池和内容日历 |
-| [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | 热点追踪、关键词研究、竞品拆解和原创选题，可选海外对照模式 |
-| [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | X、小红书、公众号、短视频平台和 YouTube 原生文案，含配图风格库 |
+| [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | 热点追踪、关键词研究、竞品拆解和原创选题，可选海外对照模式和 Reddit 讨论发现 |
+| [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | X、小红书、Reddit、公众号、短视频平台和 YouTube 原生文案，含配图风格库 |
 | [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | 钩子、口播、分镜、字幕、拍摄方案，可选数字人制片和动画解说制片，横竖屏多平台版本 |
 | [`self-media-content-analytics`](skills/self-media-content-analytics/SKILL.md) | 数据质量、基线比较、归因、决策和实验 |
 | [`self-media-content-delivery`](skills/self-media-content-delivery/SKILL.md) | 里程碑保存、版本、路径核验和完整发布包 |
