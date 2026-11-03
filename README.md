@@ -37,7 +37,7 @@ graph TD
 | [`self-media-content-workflow`](skills/self-media-content-workflow/SKILL.md) | 请求路由、状态管理、确认点和端到端编排 |
 | [`self-media-content-brief`](skills/self-media-content-brief/SKILL.md) | 澄清目标、受众、证据、角度和约束 |
 | [`self-media-content-strategy`](skills/self-media-content-strategy/SKILL.md) | 账号定位、内容配比、栏目、选题池和内容日历 |
-| [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | 热点追踪、关键词研究、竞品拆解和原创选题 |
+| [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | 热点追踪、关键词研究、竞品拆解和原创选题，可选海外对照模式 |
 | [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | X、小红书、公众号、短视频平台和 YouTube 原生文案，含配图风格库 |
 | [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | 钩子、口播、分镜、字幕、拍摄方案，可选数字人制片和动画解说制片，横竖屏多平台版本 |
 | [`self-media-content-analytics`](skills/self-media-content-analytics/SKILL.md) | 数据质量、基线比较、归因、决策和实验 |
@@ -46,6 +46,10 @@ graph TD
 | [`self-media-video-publisher`](skills/self-media-video-publisher/SKILL.md) | 视频逐平台发布包，经逐平台授权后上传 YouTube、抖音、视频号、小红书为私密、草稿或定时 |
 
 视频发布可选用 [SAU 适配器](skills/self-media-video-publisher/references/sau-adapter.md)和无依赖的 `publish.mjs` 先预览逐平台上传计划。
+
+热点雷达的[海外对照模式](skills/self-media-trend-radar/references/overseas-compare.md)用无依赖的 Python 脚本，对比同一话题在 X、YouTube、Reddit 与小红书、抖音、B站的近期互动热度，找出两侧冷热差明显的选题。数据通过 [AIsa](https://aisa.one) 的 REST API 获取，一个 API key 覆盖 6 个平台，每个话题单次约 $0.03，运行前先报价。<!-- 替换为 Dub 推荐链接后保留下一行披露 -->
+
+> 披露：上面的 AIsa 链接为推荐链接，通过该链接注册并付费，作者会获得佣金，你的价格不变。
 
 ## 快速开始
 
@@ -132,7 +136,12 @@ npx skills add yanhua1010/self-media-content-workflow --skill self-media-content
 python3 scripts/validate.py
 ```
 
-校验器检查 Skill frontmatter、目录一致性、核心文件行数、UI 元数据、相对链接和未处理的 TODO，无第三方依赖。CI 在每次提交时运行结构校验，并用官方 skills CLI 执行一次真实安装测试。
+校验器检查 Skill frontmatter、目录一致性、核心文件行数、UI 元数据、相对链接和未处理的 TODO，无第三方依赖。海外对照脚本的单元测试：
+
+```bash
+python3 -m unittest discover -s skills/self-media-trend-radar/scripts
+```
+CI 在每次提交时运行结构校验，并用官方 skills CLI 执行一次真实安装测试。
 
 ## 仓库结构
 
@@ -140,7 +149,8 @@ python3 scripts/validate.py
 skills/                   # 10 个可独立安装的 Skill
 ├── <skill>/SKILL.md      #   核心流程（≤ 500 行）
 ├── <skill>/references/   #   平台细则与详细规范
-└── <skill>/assets/       #   可复制的输出模板
+├── <skill>/assets/       #   可复制的输出模板
+└── <skill>/scripts/      #   可选脚本（视频发布、海外对照）
 scripts/validate.py       # 仓库结构校验
 .claude-plugin/           # Claude Code plugin 与 marketplace 清单
 .github/workflows/        # 结构校验 + 安装测试

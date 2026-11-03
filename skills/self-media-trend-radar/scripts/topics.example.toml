@@ -1,0 +1,20 @@
+# Copy to topics.toml in your working directory and edit. Topics to track. Each topic is searched with its `en` keywords on X / YouTube / Reddit
+# and its `zh` keywords on 小红书 / 抖音 / B站. Cost ≈ $0.03 per topic per keyword pair.
+
+window_days = 14   # only content published in this window counts toward heat
+budget_usd = 0.5   # hard cap per run; override with --budget
+
+[[topics]]
+name = "Claude Code"
+en = ["Claude Code"]
+zh = ["Claude Code"]
+
+[[topics]]
+name = "Codex CLI"
+en = ["Codex CLI"]
+zh = ["Codex"]
+
+[[topics]]
+name = "AI agent skills"
+en = ["agent skills"]
+zh = ["Agent Skills"]
