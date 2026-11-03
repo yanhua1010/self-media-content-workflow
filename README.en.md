@@ -37,7 +37,7 @@ graph TD
 | [`self-media-content-workflow`](skills/self-media-content-workflow/SKILL.md) | Request routing, state management, approvals, and end-to-end orchestration |
 | [`self-media-content-brief`](skills/self-media-content-brief/SKILL.md) | Audience, goal, evidence, angle, tone, and constraints |
 | [`self-media-content-strategy`](skills/self-media-content-strategy/SKILL.md) | Positioning, content mix, series, topic pool, and calendar |
-| [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | Trend tracking, keyword research, competitor teardowns, and original topics |
+| [`self-media-trend-radar`](skills/self-media-trend-radar/SKILL.md) | Trend tracking, keyword research, competitor teardowns, and original topics, with an optional overseas comparison mode |
 | [`self-media-platform-copywriting`](skills/self-media-platform-copywriting/SKILL.md) | Native copy for X, Xiaohongshu, WeChat, short-video platforms, and YouTube, plus the visual style library |
 | [`self-media-short-video`](skills/self-media-short-video/SKILL.md) | Hooks, spoken script, storyboard, captions, shoot plan, optional digital-human and animated-explainer production, and landscape/vertical platform versions |
 | [`self-media-content-analytics`](skills/self-media-content-analytics/SKILL.md) | Data quality, comparable baselines, attribution, decisions, and experiments |
@@ -46,6 +46,10 @@ graph TD
 | [`self-media-video-publisher`](skills/self-media-video-publisher/SKILL.md) | Per-platform video publish packs; with per-platform authorization, uploads to YouTube, Douyin, WeChat Channels, and Xiaohongshu as private, draft, or scheduled |
 
 Video publishing can use the [SAU adapter](skills/self-media-video-publisher/references/sau-adapter.md) and dependency-free `publish.mjs` to preview each platform's upload plan.
+
+The trend radar's [overseas comparison mode](skills/self-media-trend-radar/references/overseas-compare.md) is a dependency-free Python script that compares recent engagement for the same topic on X, YouTube and Reddit against Xiaohongshu, Douyin and Bilibili, and flags topics with a clear gap between the two sides. Data comes from the [AIsa](https://aisa.one) REST API: one API key covers all six platforms, a run costs about $0.03 per topic, and every run is quoted first.<!-- replace with the Dub referral link and keep the disclosure below -->
+
+> Disclosure: the AIsa link above is a referral link. If you sign up and pay through it, the author earns a commission at no extra cost to you.
 
 ## Quick start
 
@@ -132,7 +136,13 @@ See [SECURITY.md](SECURITY.md) for the full policy.
 python3 scripts/validate.py
 ```
 
-The validator checks skill frontmatter, directory consistency, core-file length, UI metadata, relative links, and unresolved TODOs, with no third-party dependencies. CI runs the structural validation on every push and performs a real installation test with the official skills CLI.
+The validator checks skill frontmatter, directory consistency, core-file length, UI metadata, relative links, and unresolved TODOs, with no third-party dependencies. CI runs the structural validation and the overseas comparison unit tests on every push, and performs a real installation test with the official skills CLI.
+
+To run the overseas comparison unit tests on their own:
+
+```bash
+python3 -m unittest discover -s skills/self-media-trend-radar/scripts
+```
 
 ## Repository layout
 
@@ -140,7 +150,8 @@ The validator checks skill frontmatter, directory consistency, core-file length,
 skills/                   # 10 independently installable skills
 ├── <skill>/SKILL.md      #   core workflow (≤ 500 lines)
 ├── <skill>/references/   #   detailed platform guidance
-└── <skill>/assets/       #   copyable output templates
+├── <skill>/assets/       #   copyable output templates
+└── <skill>/scripts/      #   optional scripts (video publishing, overseas comparison)
 scripts/validate.py       # repository validation
 .claude-plugin/           # Claude Code plugin and marketplace manifests
 .github/workflows/        # structural validation + install test

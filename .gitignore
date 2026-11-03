@@ -8,3 +8,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+
+# 海外对照模式的运行输出和本地话题配置
+overseas-compare/
+topics.toml
