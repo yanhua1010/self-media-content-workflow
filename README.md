@@ -47,7 +47,7 @@ graph TD
 
 Video publishing can use the [SAU adapter](skills/self-media-video-publisher/references/sau-adapter.md) and dependency-free `publish.mjs` to preview each platform's upload plan.
 
-The trend radar's [overseas comparison mode](skills/self-media-trend-radar/references/overseas-compare.md) is a dependency-free Python script that compares recent engagement for the same topic on X, YouTube and Reddit against Xiaohongshu, Douyin and Bilibili, and flags topics with a clear gap between the two sides. Data comes from the [AIsa](https://aisa.one) REST API: one API key covers all six platforms, a run costs about $0.03 per topic, and every run is quoted first.<!-- replace with the Dub referral link and keep the disclosure below -->
+The trend radar's [overseas comparison mode](skills/self-media-trend-radar/references/overseas-compare.md) is a dependency-free Python script that compares recent engagement for the same topic on X, YouTube and Reddit against Xiaohongshu, Douyin and Bilibili, and flags topics with a clear gap between the two sides. Data comes from the [AIsa](https://go.aisa.one/yanhua) REST API: one API key covers all six platforms, a run costs about $0.03 per topic, and every run is quoted first.
 
 > Disclosure: the AIsa link above is a referral link. If you sign up and pay through it, the author earns a commission at no extra cost to you.
 
