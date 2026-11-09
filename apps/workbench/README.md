@@ -25,7 +25,7 @@ Seven pages: accounts, radar, topics, content, review, schedule, data. `npm star
 
 ## Known gaps (2026-11-09)
 
-- AIsa's documented YouTube Analytics routes (`/analytics/youtube/*`) return 404. The data page uses follower stats, the channel video list and on-demand public view counts (`/youtube/videos`, about $0.014 each, cached locally).
+- The data page shows 30-day channel analytics from `/analytics/youtube/channel-insights` (about $0.001 per call, 2 to 3 days of delay), follower stats, the channel video list and on-demand public view counts (`/youtube/videos`, about $0.014 each, cached locally).
 - Publish fees settle asynchronously and are not in the create-post response; check usage in the AIsa console.
 - Webhooks need a public HTTPS endpoint; this local build refreshes post status on demand.
 
