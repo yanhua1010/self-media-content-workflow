@@ -27,6 +27,7 @@ const routes = [
   ['PUT', /^\/api\/contents\/(\d+)$/, (body, [id]) => ops.updateContent(Number(id), body)],
   ['POST', /^\/api\/contents\/(\d+)\/publish\/wechat$/, (body, [id]) => ops.publishWechat(Number(id), body)],
   ['GET', /^\/api\/wechat\/status$/, () => wechatStatus()],
+  ['GET', /^\/api\/balance$/, () => aisa.balance().then((r) => ({ usd: (r.data?.available_balance_micros_usd ?? 0) / 1e6 }))],
   ['GET', /^\/api\/topics$/, () => ops.listTopics()],
   ['POST', /^\/api\/topics$/, (body) => ops.addTopic(body)],
   ['POST', /^\/api\/topics\/(\d+)\/status$/, (body, [id]) => ops.setTopicStatus(Number(id), body.status)],

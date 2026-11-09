@@ -94,6 +94,9 @@ export function createAisa({ apiKey = process.env.AISA_API_KEY, db, fetchImpl = 
     followerStats: (accountIds) => call('GET', '/accounts/follower-stats', { query: { accountIds } }),
     channelVideos: (accountId) => call('GET', `/accounts/${encodeURIComponent(accountId)}/posts`),
 
+    // Account balance (free).
+    balance: () => call('GET', '/credits/balance', { root: 'https://api.aisa.one/v1' }),
+
     // Public read API (not the connected account): one YouTube video's public stats, about $0.014.
     youtubePublicVideo: (url) => call('GET', '/youtube/videos', { query: { url }, maxPriceUsd: 0.03, root: ROOT }),
   };

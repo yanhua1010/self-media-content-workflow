@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A · 简洁 SaaS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f7f8;--card:#fff;--line:#e7e7ea;--t1:#18181b;--t2:#52525b;--t3:#a1a1aa;--acc:#4f46e5;--acc-s:#eef2ff;--ok:#16a34a;--ok-s:#dcfce7;--warn:#d97706;--warn-s:#fef3c7;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;font:14px/1.55 Inter,"Noto Sans SC",sans-serif;background:var(--bg);color:var(--t1)}
+.app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+aside{background:#fff;border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:2px}
+.ws{display:flex;align-items:center;gap:10px;padding:6px 8px 16px}.logo{width:28px;height:28px;border-radius:8px;background:var(--acc);color:#fff;display:grid;place-items:center;font-weight:700}
+.ws b{font-size:14px}.ws small{display:block;color:var(--t3);font-size:12px}
+.nav{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:7px;color:var(--t2);text-decoration:none;font-weight:500}
+.nav svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}.nav:hover{background:#f4f4f5}.nav.on{background:var(--acc-s);color:var(--acc)}
+.nav .n{margin-left:auto;font-size:11px;background:var(--acc);color:#fff;border-radius:10px;padding:0 7px}
+.sec{font-size:11px;color:var(--t3);padding:14px 10px 4px;font-weight:600}
+.foot{margin-top:auto;padding:10px;border-top:1px solid var(--line);font-size:12px;color:var(--t3)}
+main{padding:24px 32px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:22px}.top h1{margin:0;font-size:22px;font-weight:700}.top .sub{color:var(--t3);font-size:13px}
+.sp{flex:1}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;font-weight:500;color:var(--t1);cursor:pointer}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.kpi .l{color:var(--t2);font-size:13px}.kpi .v{font-size:26px;font-weight:700;margin-top:4px;letter-spacing:-.02em}.kpi .d{font-size:12px;color:var(--t3);margin-top:2px}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-top:14px}
+.ch{display:flex;align-items:center;margin-bottom:12px}.ch h3{margin:0;font-size:15px}.ch a{margin-left:auto;font-size:13px;color:var(--acc);text-decoration:none}
+.pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.col{background:#fafafa;border:1px solid var(--line);border-radius:10px;padding:10px;min-height:170px}
+.col h4{margin:0 0 8px;font-size:12px;color:var(--t2);display:flex;justify-content:space-between}
+.it{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 9px;font-size:12.5px;margin-bottom:7px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.it .m{display:flex;gap:6px;margin-top:6px}
+.pill{font-size:11px;padding:1px 7px;border-radius:20px;background:#f4f4f5;color:var(--t2);font-weight:500}
+.pill.yt{background:#fee2e2;color:#b91c1c}.pill.wx{background:#dcfce7;color:#15803d}.pill.x{background:#18181b;color:#fff}
+.pill.ok{background:var(--ok-s);color:var(--ok)}.pill.warn{background:var(--warn-s);color:var(--warn)}
+.acc{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.acc:last-child{border:0}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px}
+.acc .nm{font-weight:600}.acc .s{font-size:12px;color:var(--t3)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:5px}
+table{width:100%;border-collapse:collapse;font-size:13px}td{padding:9px 6px;border-bottom:1px solid var(--line)}tr:last-child td{border:0}
+.num{text-align:right;color:var(--t2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sched{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.sched:last-child{border:0}
+.when{width:52px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:4px 0;font-size:11px;color:var(--t3)}.when b{display:block;font-size:17px;color:var(--t1)}
+</style></head><body>
+<div class="app">
+<aside>
+  <div class="ws"><div class="logo">彦</div><div><b>彦华的内容工作台</b><small>本地 · 2 个平台已连接</small></div></div>
+  <a class="nav on" href="#"><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8M5 10v10h14V10"/></svg>总览</a>
+  <div class="sec">内容流程</div>
+  <a class="nav" href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 12l5-3"/></svg>雷达</a>
+  <a class="nav" href="#"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.7V16h8v-1.3A7 7 0 0012 2z"/></svg>选题</a>
+  <a class="nav" href="#"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>内容</a>
+  <a class="nav" href="#"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>审核<span class="n">1</span></a>
+  <a class="nav" href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>排期</a>
+  <div class="sec">运营</div>
+  <a class="nav" href="#"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>数据</a>
+  <a class="nav" href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>账号</a>
+  <div class="foot">AIsa 余额 <b style="color:var(--t1)">$7.03</b><br>本月调用花费 $0.098</div>
+</aside>
+<main>
+  <div class="top"><div><h1>总览</h1><div class="sub">2026 年 11 月 9 日 周一</div></div><span class="sp"></span><button class="btn">⌘K 搜索</button><button class="btn p">＋ 新建内容</button></div>
+  <div class="kpis">
+    <div class="card kpi"><div class="l">X 粉丝</div><div class="v">37,925</div><div class="d">@yanhua1010 · 正常</div></div>
+    <div class="card kpi"><div class="l">YouTube 订阅</div><div class="v">30</div><div class="d">@yanhua1010 · 正常</div></div>
+    <div class="card kpi"><div class="l">雷达样本（近 30 天）</div><div class="v">154</div><div class="d">6 个平台 · 11-09 16:52</div></div>
+    <div class="card kpi"><div class="l">本周已发布</div><div class="v">1</div><div class="d">YouTube 私密测试</div></div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="ch"><h3>内容流水线</h3><a href="#">全部内容 →</a></div>
+      <div class="pipe">
+        <div class="col"><h4>选题 <span>3</span></h4><div class="it">我用开源技能 + Agent 搭了一个自媒体工作台<div class="m"><span class="pill ok">选定</span></div></div><div class="it">AI 能替你跑社媒，但发布前那一下…<div class="m"><span class="pill">候选</span></div></div></div>
+        <div class="col"><h4>草稿 <span>2</span></h4><div class="it">我给自己的开源技能补上了最后一步<div class="m"><span class="pill wx">公众号</span></div></div><div class="it">自媒体值班台实操录屏<div class="m"><span class="pill yt">YouTube</span><span class="pill x">X</span></div></div></div>
+        <div class="col"><h4>待审 <span>0</span></h4></div>
+        <div class="col"><h4>已排期 <span>0</span></h4></div>
+        <div class="col"><h4>已发布 <span>1</span></h4><div class="it">workbench test (private)<div class="m"><span class="pill yt">YouTube</span></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><h3>即将发布</h3><a href="#">日历 →</a></div>
+      <div class="sched"><div class="when">11月<b>09</b></div><div><div style="font-weight:600">workbench test (private)</div><div class="s" style="font-size:12px;color:var(--t3)">17:09 · <span class="pill yt">YouTube</span> <span class="pill ok">已发布</span></div></div></div>
+      <div class="sched"><div class="when">11月<b>11</b></div><div><div style="font-weight:600;color:var(--t3)">录屏讲解（待录）</div><div style="font-size:12px;color:var(--t3)">YouTube + X 同发 · 未排期</div></div></div>
+      <div class="ch" style="margin-top:14px"><h3>账号</h3></div>
+      <div class="acc"><div class="av" style="background:#18181b">X</div><div><div class="nm">Yanhua</div><div class="s">@yanhua1010 · AIsa 发布通道</div></div><span class="sp"></span><span style="font-size:12px"><span class="dot"></span>正常</span></div>
+      <div class="acc"><div class="av" style="background:#dc2626">▶</div><div><div class="nm">Yanhua</div><div class="s">YouTube · AIsa 发布通道</div></div><span class="sp"></span><span style="font-size:12px"><span class="dot"></span>正常</span></div>
+      <div class="acc"><div class="av" style="background:#16a34a">微</div><div><div class="nm">彦华AI路书</div><div class="s">公众号 · 只写草稿箱</div></div><span class="sp"></span><span style="font-size:12px"><span class="dot"></span>可用</span></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="ch"><h3>雷达 · 高互动样本</h3><a href="#">打开雷达 →</a></div>
+    <table>
+      <tr><td><span class="pill">Instagram</span></td><td>替公司跑社媒的整套 agent</td><td class="num">播放 44.3万</td><td class="num">评论 2.99万</td><td class="num">10-20</td></tr>
+      <tr><td><span class="pill yt">YouTube</span></td><td>Claude Code: Build Your First AI Agent in 20 Minutes</td><td class="num">播放 26.1万</td><td class="num">—</td><td class="num">约 10-31</td></tr>
+      <tr><td><span class="pill">小红书</span></td><td>建议大家尽早建立自媒体Agent表达逻辑</td><td class="num">赞 4258</td><td class="num">藏 4072</td><td class="num">11-02</td></tr>
+      <tr><td><span class="pill wx">公众号</span></td><td>一站式创作Agent！用 AI 改写自媒体工作流</td><td class="num">阅读 2.9万</td><td class="num">—</td><td class="num">10-12</td></tr>
+    </table>
+  </div>
+</main></div></body></html>

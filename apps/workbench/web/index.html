@@ -3,38 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>内容值班台</title>
+  <title>内容工作台</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
-  <header class="masthead">
-    <div class="mast-left">
-      <div class="mast-title">内容值班台</div>
-      <div class="mast-sub">选题 · 内容 · 审核 · 排期 · 复盘</div>
-    </div>
-    <div class="mast-right">
-      <div class="mast-meta"><span class="k">今日</span><span id="today" class="mono"></span></div>
-      <div class="mast-meta"><span class="k">本地记账</span><span id="spend" class="mono">—</span></div>
-    </div>
-  </header>
-
-  <div class="frame">
-    <nav class="rail" id="rail">
-      <a href="#accounts" data-page="accounts"><i>01</i>账号</a>
-      <a href="#radar" data-page="radar"><i>02</i>雷达</a>
-      <a href="#topics" data-page="topics"><i>03</i>选题</a>
-      <a href="#contents" data-page="contents"><i>04</i>内容</a>
-      <a href="#review" data-page="review"><i>05</i>审核<b id="review-count"></b></a>
-      <a href="#calendar" data-page="calendar"><i>06</i>排期</a>
-      <a href="#data" data-page="data"><i>07</i>数据</a>
-      <div class="rail-foot">读：AIsa 公开数据接口<br>写：AIsa 发布通道 · 微信官方接口<br>Key 只在本机后端</div>
-    </nav>
-    <main id="page" class="page" aria-live="polite"></main>
+  <div class="app">
+    <aside class="side" id="rail">
+      <div class="ws">
+        <div class="logo">彦</div>
+        <div><b>彦华的内容工作台</b><small id="ws-sub">本地运行</small></div>
+      </div>
+      <a class="nav" href="#overview" data-page="overview"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7M5 9.5V20h14V9.5"/></svg>总览</a>
+      <div class="sec">内容流程</div>
+      <a class="nav" href="#radar" data-page="radar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 12l5.5-3.5"/></svg>雷达</a>
+      <a class="nav" href="#topics" data-page="topics"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6.5 6.5 0 00-3.8 11.8V16h7.6v-1.2A6.5 6.5 0 0012 3z"/></svg>选题</a>
+      <a class="nav" href="#contents" data-page="contents"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/></svg>内容</a>
+      <a class="nav" href="#review" data-page="review"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>审核<b id="review-count"></b></a>
+      <a class="nav" href="#calendar" data-page="calendar"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>排期</a>
+      <div class="sec">运营</div>
+      <a class="nav" href="#data" data-page="data"><svg viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/></svg>数据</a>
+      <a class="nav" href="#accounts" data-page="accounts"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c1-3.8 4-5.8 7.5-5.8s6.5 2 7.5 5.8"/></svg>账号</a>
+      <div class="side-foot">
+        <div class="row"><span class="muted">AIsa 余额</span><span class="spacer"></span><b id="balance">—</b></div>
+        <div class="row"><span class="muted">本地记账</span><span class="spacer"></span><span id="spend">—</span></div>
+        <div class="muted small" style="margin-top:6px">Key 只在本机后端</div>
+      </div>
+    </aside>
+    <main class="main"><div id="page" class="page" aria-live="polite"></div></main>
   </div>
-
   <div id="toast" class="toast" role="status"></div>
   <dialog id="dialog"></dialog>
   <script type="module" src="app.js"></script>
