@@ -493,7 +493,9 @@ async function calendarPage() {
 async function dataPage() {
   const [acc, spend, posts] = await Promise.all([api('/accounts'), api('/spend'), api('/posts')]);
   const yt = (acc.data || []).find((a) => a.platform === 'youtube');
-  const ch = yt ? await api(`/youtube/channel/${yt.id}`).catch(() => null) : null;
+  const [ch, ins] = yt ? await Promise.all([api(`/youtube/channel/${yt.id}`).catch(() => null), api(`/youtube/insights/${yt.id}`).catch(() => null)]) : [null, null];
+  const m = ins?.metrics || {};
+  const mv = (k) => fmtN(m[k]?.total);
   const vids = ch?.videos?.posts || [];
   const publicStats = ch?.publicStats || {};
   const ours = new Set(posts.map((p) => p.url).filter(Boolean));
@@ -504,6 +506,13 @@ async function dataPage() {
       <div class="card stat"><div class="n">${posts.filter((p) => p.status === 'published').length}</div><div class="l">经工作台发布</div></div>
       <div class="card stat"><div class="n">$${(spend.usd || 0).toFixed(3)}</div><div class="l">本地记账（${spend.calls} 次调用）</div></div>
     </div>
+    <h2>频道后台 · 近 30 天${ins?.dateRange ? `（${esc(ins.dateRange.since)} 至 ${esc(ins.dateRange.until)}）` : ''}</h2>
+    ${ins ? `<div class="grid g4">
+      <div class="card stat"><div class="n">${mv('views')}</div><div class="l">播放</div></div>
+      <div class="card stat"><div class="n">${mv('estimatedMinutesWatched')}</div><div class="l">观看分钟</div></div>
+      <div class="card stat"><div class="n">+${mv('subscribersGained')}</div><div class="l">新增订阅</div></div>
+      <div class="card stat"><div class="n">−${mv('subscribersLost')}</div><div class="l">取消订阅</div></div>
+    </div><p class="muted small">来自 YouTube Analytics，数据有 2 到 3 天延迟。</p>` : '<div class="note">频道分析接口暂时拿不到数据，下面先看公开数据。</div>'}
     <h2>频道视频</h2>
     <div class="card table-card"><table><thead><tr><th>发布</th><th>视频</th><th style="text-align:right">赞</th><th style="text-align:right">评论</th><th style="text-align:right">播放（公开）</th></tr></thead><tbody>
     ${vids.map((v) => { const s = publicStats[v.permalink]; return `<tr>
@@ -513,7 +522,6 @@ async function dataPage() {
       <td class="num">${fmtN(v.likeCount)}</td><td class="num">${fmtN(v.commentCount)}</td>
       <td class="num">${s ? `${fmtN(s.views)}<div class="muted small">${fmtDate(s.fetched_at, true)} <button class="btn sm ghost" data-views="${esc(v.permalink)}" title="重新拉取 $0.014">↻</button></div>` : `<button class="btn sm ghost" data-views="${esc(v.permalink)}">拉取 $0.014</button>`}</td></tr>`; }).join('') || '<tr><td colspan="5" class="muted">没有视频</td></tr>'}
     </tbody></table></div>
-    <div class="note" style="margin-top:14px">AIsa 文档里的 YouTube 频道分析接口（每日播放、留存、受众画像）目前线上返回 404，这里先用公开数据兜底，接口可用后换成频道后台数据。</div>
     <h2>调用记账</h2>
     <div class="card table-card"><table><thead><tr><th>时间</th><th>请求</th><th>状态</th><th style="text-align:right">费用</th></tr></thead><tbody>
     ${spend.recent.map((s) => `<tr><td class="num" style="text-align:left">${fmtDate(s.at, true)}</td><td class="mono small">${esc(s.method)} ${esc(s.path.replace(/.*\/data\//, 'data/'))}</td><td class="num">${s.http_status}</td><td class="num">$${s.cost_usd.toFixed(4)}</td></tr>`).join('')}

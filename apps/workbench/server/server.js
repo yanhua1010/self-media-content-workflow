@@ -46,6 +46,7 @@ const routes = [
     const publicStats = Object.fromEntries(db.prepare('SELECT * FROM public_stats').all().map((r) => [r.url, r]));
     return { followers: stats.data, videos: videos.data, publicStats };
   }],
+  ['GET', /^\/api\/youtube\/insights\/(acc_\w+)$/, (_, [acc]) => aisa.youtubeChannelInsights({ accountId: acc }).then((r) => r.data)],
   ['POST', /^\/api\/youtube\/public-stats$/, async (b) => {
     if (!/^https:\/\/(www\.)?youtube\.com\/watch\?v=[\w-]{6,}$|^https:\/\/youtu\.be\/[\w-]{6,}$/.test(b.url || '')) throw new GateError('expected a YouTube video URL');
     const r = await aisa.youtubePublicVideo(b.url);
