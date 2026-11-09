@@ -1,0 +1,16 @@
+{
+  "name": "self-media-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local operations workbench for the self-media skill suite: topics, review, scheduling, publishing and analytics.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server/server.js",
+    "cli": "node --disable-warning=ExperimentalWarning server/cli.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
+  },
+  "license": "MIT"
+}
