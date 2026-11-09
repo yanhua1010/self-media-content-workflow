@@ -3,7 +3,8 @@
 import { readFile, stat } from 'node:fs/promises';
 import { basename, extname } from 'node:path';
 
-const BASE = 'https://api.aisa.one/apis/v1/social';
+const ROOT = 'https://api.aisa.one/apis/v1';
+const BASE = `${ROOT}/social`;
 const COST_HEADER = 'x-aisa-customer-cost-micros-usd';
 const DEFAULT_MAX_PRICE_USD = 0.05;
 
@@ -27,8 +28,8 @@ export function createAisa({ apiKey = process.env.AISA_API_KEY, db, fetchImpl = 
     ? db.prepare('INSERT INTO spend (method, path, http_status, cost_usd) VALUES (?, ?, ?, ?)')
     : null;
 
-  async function call(method, path, { query, body, maxPriceUsd, idempotencyKey } = {}) {
-    const url = new URL(BASE + path);
+  async function call(method, path, { query, body, maxPriceUsd, idempotencyKey, root = BASE } = {}) {
+    const url = new URL(root + path);
     for (const [k, v] of Object.entries(query || {})) if (v !== undefined && v !== null) url.searchParams.set(k, v);
     const headers = { Authorization: `Bearer ${apiKey}`, Accept: 'application/json' };
     if (body !== undefined) headers['Content-Type'] = 'application/json';
@@ -90,5 +91,10 @@ export function createAisa({ apiKey = process.env.AISA_API_KEY, db, fetchImpl = 
     youtubeChannelInsights: (query) => call('GET', '/analytics/youtube/channel-insights', { query, maxPriceUsd: 0.01 }),
     youtubeDailyViews: (query) => call('GET', '/analytics/youtube/daily-views', { query, maxPriceUsd: 0.01 }),
     youtubeRetention: (query) => call('GET', '/analytics/youtube/video-retention', { query, maxPriceUsd: 0.01 }),
+    followerStats: (accountIds) => call('GET', '/accounts/follower-stats', { query: { accountIds } }),
+    channelVideos: (accountId) => call('GET', `/accounts/${encodeURIComponent(accountId)}/posts`),
+
+    // Public read API (not the connected account): one YouTube video's public stats, about $0.014.
+    youtubePublicVideo: (url) => call('GET', '/youtube/videos', { query: { url }, maxPriceUsd: 0.03, root: ROOT }),
   };
 }

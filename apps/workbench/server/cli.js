@@ -5,8 +5,6 @@ import { openDb } from './db.js';
 import { createAisa } from './aisa.js';
 import { createOps } from './ops.js';
 import * as radar from './radar.js';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 const HELP = `usage: npm run cli -- <command> [options]
 
@@ -27,7 +25,9 @@ yt:daily --account acc_... --video VIDEO_ID
 spend
 radar:quote --en "k1,k2" --zh "k1,k2" [--platforms x,youtube,tiktok,instagram,xiaohongshu,wechat]
 radar:run   (same flags) [--budget 0.3]      saves raw responses under data/radar/<time>/
-radar:parse <dir> --topic T [--days 30] [--en ..] [--zh ..]   free, stores a radar run`;
+radar:parse <dir> --topic T [--days 30] [--en ..] [--zh ..]   free, stores a radar run
+topic:add --title T [--body angle]
+publish:wechat <id> [--theme default]      approved article → 公众号草稿箱 (never mass-send)`;
 
 const { positionals, values } = parseArgs({
   allowPositionals: true,
@@ -39,12 +39,11 @@ const { positionals, values } = parseArgs({
     at: { type: 'string' }, tz: { type: 'string' }, ai: { type: 'boolean' },
     from: { type: 'string' }, to: { type: 'string' }, video: { type: 'string' },
     en: { type: 'string' }, zh: { type: 'string' }, platforms: { type: 'string' },
-    budget: { type: 'string' }, days: { type: 'string' },
+    budget: { type: 'string' }, days: { type: 'string' }, theme: { type: 'string' },
   },
 });
 
 const [cmd, arg] = positionals;
-const RADAR_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'data', 'radar');
 const list = (s) => (s ? s.split(',').map((x) => x.trim()).filter(Boolean) : []);
 const radarPlan = () => radar.plan({ en: list(values.en), zh: list(values.zh) }, values.platforms ? list(values.platforms) : undefined);
 if (!cmd || cmd === 'help') { console.log(HELP); process.exit(0); }
@@ -83,22 +82,16 @@ const commands = {
     const q = await radar.quote(process.env.AISA_API_KEY, radarPlan());
     return { calls: q.length, totalUsd: +q.reduce((s, x) => s + (x.usd || 0), 0).toFixed(6), quotes: q };
   },
-  'radar:run': async () => {
-    const dir = join(RADAR_DIR, new Date().toISOString().replace(/[:.]/g, '-'));
-    const r = await radar.run(process.env.AISA_API_KEY, radarPlan(), { budgetUsd: Number(values.budget || 0.3), outDir: dir });
-    db.prepare('INSERT INTO spend (method, path, http_status, cost_usd) VALUES (?, ?, ?, ?)').run('RADAR', dir, 200, r.spentUsd);
-    return { dir, ...r };
-  },
-  'radar:parse': async () => {
-    const items = await radar.parseDir(arg, { windowDays: Number(values.days || 30) });
-    const meta = { topic: values.topic || 'untitled', keywords: { en: list(values.en), zh: list(values.zh) }, windowDays: Number(values.days || 30), dir: arg };
-    const collectedAt = items[0]?.collectedAt || new Date().toISOString();
-    const row = db.prepare('INSERT INTO radar_runs (topic, params_json, results_json, cost_usd, collected_at) VALUES (?, ?, ?, 0, ?) RETURNING id')
-      .get(meta.topic, JSON.stringify(meta), JSON.stringify(items), collectedAt);
-    const by = {};
-    for (const it of items) { const b = (by[it.platform] ||= { total: 0, inWindow: 0 }); b.total++; if (it.inWindow) b.inWindow++; }
-    return { radarRunId: row.id, items: items.length, byPlatform: by };
-  },
+  'radar:run': () => radar.runAndStore(db, process.env.AISA_API_KEY, {
+    topic: values.topic || 'untitled', keywords: { en: list(values.en), zh: list(values.zh) },
+    platforms: values.platforms ? list(values.platforms) : undefined,
+    budgetUsd: Number(values.budget || 0.3), windowDays: Number(values.days || 30),
+  }),
+  'radar:parse': () => radar.storeRun(db, arg, {
+    topic: values.topic || 'untitled', keywords: { en: list(values.en), zh: list(values.zh) }, windowDays: Number(values.days || 30),
+  }),
+  'topic:add': () => ops.addTopic({ title: values.title, angle: values.body }),
+  'publish:wechat': () => ops.publishWechat(Number(arg), { theme: values.theme || 'default' }),
 };
 
 const fn = commands[cmd];

@@ -1,6 +1,10 @@
 // Workbench operations shared by the HTTP server and the CLI.
 // The approval gate lives here: nothing reaches a platform unless a person approved that content.
 import { createHash } from 'node:crypto';
+import { spawn } from 'node:child_process';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export class GateError extends Error {}
 
@@ -25,6 +29,14 @@ export function createOps({ db, aisa }) {
     activePost: db.prepare(`SELECT * FROM posts WHERE content_id = ? AND platform = ?
       AND status NOT IN ('failed','cancelled','deleted') LIMIT 1`),
     posts: db.prepare('SELECT * FROM posts ORDER BY COALESCE(scheduled_for, created_at) DESC'),
+    updateContent: db.prepare(`UPDATE contents SET title = ?, body = ?, media_path = ?, options_json = ?,
+      status = 'draft', review_note = NULL, approved_at = NULL, updated_at = ? WHERE id = ? RETURNING *`),
+    topics: db.prepare('SELECT * FROM topics ORDER BY id DESC'),
+    insertTopic: db.prepare('INSERT INTO topics (title, angle, evidence_json, radar_run_id) VALUES (?, ?, ?, ?) RETURNING *'),
+    setTopicStatus: db.prepare('UPDATE topics SET status = ? WHERE id = ? RETURNING *'),
+    radarRuns: db.prepare('SELECT id, topic, cost_usd, collected_at FROM radar_runs ORDER BY id DESC'),
+    radarRun: db.prepare('SELECT * FROM radar_runs WHERE id = ?'),
+    latestRadarRun: db.prepare('SELECT * FROM radar_runs ORDER BY id DESC LIMIT 1'),
     spendTotal: db.prepare('SELECT COUNT(*) AS calls, ROUND(SUM(cost_usd), 6) AS usd FROM spend'),
     spendRecent: db.prepare('SELECT * FROM spend ORDER BY id DESC LIMIT ?'),
   };
@@ -94,7 +106,83 @@ export function createOps({ db, aisa }) {
       return q.updatePost.get(data?.status ?? p.status, url, JSON.stringify(data), now(), localId);
     },
 
+    // Any edit sends the content back to draft: an approval covers exactly what the person saw.
+    updateContent(id, { title, body, mediaPath, options }) {
+      const c = rowToContent(q.content.get(id));
+      if (!c) throw new GateError(`content ${id} not found`);
+      return rowToContent(q.updateContent.get(
+        title ?? c.title, body ?? c.body, mediaPath ?? c.media_path,
+        JSON.stringify(options ? { ...c.options, ...options } : c.options), now(), id));
+    },
+
+    // Write an approved article into the WeChat Official Account draft box (never mass-send).
+    async publishWechat(id, { theme = 'default', runner = runWenyan } = {}) {
+      const c = rowToContent(q.content.get(id));
+      if (!c) throw new GateError(`content ${id} not found`);
+      if (c.status !== 'approved') throw new GateError(`content ${id} is ${c.status}; approve it before publishing`);
+      if (c.platform !== 'wechat') throw new GateError(`content ${id} is for ${c.platform}, not wechat`);
+      if (!c.title || !c.body) throw new GateError('a WeChat article needs a title and a body');
+      const cover = c.options.cover;
+      if (!cover && !/!\[[^\]]*\]\([^)]+\)/.test(c.body)) throw new GateError('set options.cover or include an image in the body');
+      const live = q.activePost.get(id, 'wechat');
+      if (live) throw new GateError(`content ${id} already has a WeChat draft (post ${live.id})`);
+
+      const fm = ['---', `title: ${JSON.stringify(c.title)}`];
+      if (cover) fm.push(`cover: ${JSON.stringify(cover)}`);
+      if (c.options.author) fm.push(`author: ${JSON.stringify(c.options.author)}`);
+      fm.push('---', '');
+      const file = join(WECHAT_DIR, `content-${id}.md`);
+      await mkdir(WECHAT_DIR, { recursive: true });
+      await writeFile(file, fm.join('\n') + c.body);
+
+      const result = await runner(file, theme);
+      const summary = redact(result.output).slice(-400);
+      if (!result.ok) throw new GateError(`wenyan publish failed: ${summary}`);
+      const mediaId = summary.match(/media_id["':\s]+([\w-]+)/i)?.[1] || null;
+      return q.insertPost.get(id, 'wechat', 'wechat', null, mediaId, 'draft_saved', null, null, null,
+        JSON.stringify({ theme, output: summary }));
+    },
+
+    // Topics
+    listTopics: () => q.topics.all().map((t) => ({ ...t, evidence: parse(t.evidence_json, []) })),
+    addTopic({ title, angle = null, evidence = [], radarRunId = null }) {
+      if (!title) throw new GateError('title is required');
+      const t = q.insertTopic.get(title, angle, JSON.stringify(evidence), radarRunId);
+      return { ...t, evidence };
+    },
+    setTopicStatus(id, status) {
+      if (!['proposed', 'picked', 'dropped'].includes(status)) throw new GateError(`bad topic status ${status}`);
+      return q.setTopicStatus.get(status, id);
+    },
+
+    // Radar
+    radarRuns: () => q.radarRuns.all(),
+    radarRun(id) {
+      const r = id ? q.radarRun.get(id) : q.latestRadarRun.get();
+      return r && { ...r, params: parse(r.params_json, {}), items: parse(r.results_json, []), params_json: undefined, results_json: undefined };
+    },
+
     listPosts: () => q.posts.all(),
     spend: (limit = 20) => ({ ...q.spendTotal.get(), recent: q.spendRecent.all(limit) }),
   };
+}
+
+const WECHAT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'data', 'wechat');
+
+// Strip anything that looks like a credential before output is stored or shown.
+export function redact(s) {
+  return String(s || '')
+    .replace(/(access_token|appsecret|app_secret|secret|token)(["'=:\s]+)[\w.-]{8,}/gi, '$1$2[redacted]')
+    .replace(/\b[0-9a-f]{32,}\b/gi, '[redacted]');
+}
+
+function runWenyan(file, theme) {
+  return new Promise((resolveRun) => {
+    const child = spawn('wenyan', ['publish', '-f', file, '-t', theme], { env: process.env });
+    let output = '';
+    child.stdout.on('data', (d) => { output += d; });
+    child.stderr.on('data', (d) => { output += d; });
+    child.on('error', (e) => resolveRun({ ok: false, output: e.message }));
+    child.on('close', (code) => resolveRun({ ok: code === 0, output }));
+  });
 }

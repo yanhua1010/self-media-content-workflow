@@ -2,7 +2,7 @@
 
 A local operations workbench for the skill suite: radar, topics, content review, scheduling, publishing and analytics in one place. The agent does the thinking work through the skills; the workbench holds the state and the human approval gate.
 
-Status: backend only (D1). The web UI comes next.
+Seven pages: accounts, radar, topics, content, review, schedule, data. `npm start` and open http://127.0.0.1:4318.
 
 ## Channels
 
@@ -19,6 +19,14 @@ Status: backend only (D1). The web UI comes next.
 - YouTube posts require an explicit `madeForKids` choice and a visibility. One active post per content and platform.
 - Every paid call carries `X-AISA-Max-Price-USD`; every AIsa call is logged in the `spend` table.
 - Radar is read-only, quoted first, and runs under a budget cap. Raw responses are kept under `data/radar/<time>/`.
+- Editing approved content sends it back to draft. WeChat output is redacted before it is stored.
+- The API refuses cross-origin writes and binds to 127.0.0.1.
+
+## Known gaps (2026-11-09)
+
+- AIsa's documented YouTube Analytics routes (`/analytics/youtube/*`) return 404. The data page uses follower stats, the channel video list and on-demand public view counts (`/youtube/videos`, about $0.014 each, cached locally).
+- Publish fees settle asynchronously and are not in the create-post response; check usage in the AIsa console.
+- Webhooks need a public HTTPS endpoint; this local build refreshes post status on demand.
 
 ## Run
 

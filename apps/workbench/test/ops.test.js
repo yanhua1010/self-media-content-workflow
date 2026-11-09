@@ -54,3 +54,35 @@ test('radar parsers keep link, time and engagement', () => {
   assert.equal(wx.metrics.reads, 29000);
   assert.ok(wx.url.startsWith('https://'));
 });
+
+test('editing approved content sends it back to draft', () => {
+  const ops = createOps({ db: openDb(':memory:'), aisa: fakeAisa() });
+  const c = ops.addContent({ platform: 'wechat', title: 't', body: 'b' });
+  ops.submitForReview(c.id);
+  ops.review(c.id, { approve: true });
+  const edited = ops.updateContent(c.id, { body: 'b2' });
+  assert.equal(edited.status, 'draft');
+  assert.equal(edited.approved_at, null);
+});
+
+test('WeChat draft needs approval and a cover, and never stores secrets', async () => {
+  const { redact } = await import('../server/ops.js');
+  const ops = createOps({ db: openDb(':memory:'), aisa: fakeAisa() });
+  const runs = [];
+  const runner = async (file) => { runs.push(file); return { ok: true, output: 'access_token=abcdefghijklmnop\n草稿创建成功 media_id: Mx9_aBc-123' }; };
+  const c = ops.addContent({ platform: 'wechat', title: '标题', body: '正文' });
+  await assert.rejects(ops.publishWechat(c.id, { runner }), /approve/);
+  ops.submitForReview(c.id);
+  ops.review(c.id, { approve: true });
+  await assert.rejects(ops.publishWechat(c.id, { runner }), /cover/);
+  ops.updateContent(c.id, { options: { cover: '/tmp/c.png' } });
+  ops.submitForReview(c.id);
+  ops.review(c.id, { approve: true });
+  const post = await ops.publishWechat(c.id, { runner });
+  assert.equal(post.status, 'draft_saved');
+  assert.equal(post.remote_id, 'Mx9_aBc-123');
+  assert.ok(!post.last_response_json.includes('abcdefghijklmnop'));
+  assert.equal(runs.length, 1);
+  await assert.rejects(ops.publishWechat(c.id, { runner }), /already has a WeChat draft/);
+  assert.equal(redact('secret: 0123456789abcdef0123'), 'secret: [redacted]');
+});

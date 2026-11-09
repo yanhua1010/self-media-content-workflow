@@ -138,6 +138,27 @@ export async function run(apiKey, calls, { budgetUsd, outDir }) {
   return { spentUsd: Math.round(spent * 1e6) / 1e6, log };
 }
 
+export const RADAR_DIR = new URL('../data/radar/', import.meta.url).pathname;
+
+// Store a parsed run so the UI can read it. Free; works on any saved directory.
+export async function storeRun(db, dir, { topic, keywords, windowDays = 30, costUsd = 0 }) {
+  const items = await parseDir(dir, { windowDays });
+  const collectedAt = items[0]?.collectedAt || new Date().toISOString();
+  const { id } = db.prepare('INSERT INTO radar_runs (topic, params_json, results_json, cost_usd, collected_at) VALUES (?, ?, ?, ?, ?) RETURNING id')
+    .get(topic, JSON.stringify({ topic, keywords, windowDays, dir }), JSON.stringify(items), costUsd, collectedAt);
+  return { id, items: items.length };
+}
+
+// Quote → run → store, under a hard budget. The caller decides whether the quote is acceptable.
+export async function runAndStore(db, apiKey, { topic, keywords, platforms, budgetUsd = 0.2, windowDays = 30 }) {
+  const calls = plan(keywords, platforms);
+  const dir = join(RADAR_DIR, new Date().toISOString().replace(/[:.]/g, '-'));
+  const r = await run(apiKey, calls, { budgetUsd, outDir: dir });
+  db.prepare('INSERT INTO spend (method, path, http_status, cost_usd) VALUES (?, ?, ?, ?)').run('RADAR', dir, 200, r.spentUsd);
+  const stored = await storeRun(db, dir, { topic, keywords, windowDays, costUsd: r.spentUsd });
+  return { ...stored, spentUsd: r.spentUsd, log: r.log };
+}
+
 // Re-parse saved raw responses (free). Keeps items within `windowDays` when a time is known.
 export async function parseDir(outDir, { windowDays = 30 } = {}) {
   const items = [];

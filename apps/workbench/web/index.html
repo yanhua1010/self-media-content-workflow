@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>内容值班台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="mast-left">
+      <div class="mast-title">内容值班台</div>
+      <div class="mast-sub">选题 · 内容 · 审核 · 排期 · 复盘</div>
+    </div>
+    <div class="mast-right">
+      <div class="mast-meta"><span class="k">今日</span><span id="today" class="mono"></span></div>
+      <div class="mast-meta"><span class="k">本地记账</span><span id="spend" class="mono">—</span></div>
+    </div>
+  </header>
+
+  <div class="frame">
+    <nav class="rail" id="rail">
+      <a href="#accounts" data-page="accounts"><i>01</i>账号</a>
+      <a href="#radar" data-page="radar"><i>02</i>雷达</a>
+      <a href="#topics" data-page="topics"><i>03</i>选题</a>
+      <a href="#contents" data-page="contents"><i>04</i>内容</a>
+      <a href="#review" data-page="review"><i>05</i>审核<b id="review-count"></b></a>
+      <a href="#calendar" data-page="calendar"><i>06</i>排期</a>
+      <a href="#data" data-page="data"><i>07</i>数据</a>
+      <div class="rail-foot">读：AIsa 公开数据接口<br>写：AIsa 发布通道 · 微信官方接口<br>Key 只在本机后端</div>
+    </nav>
+    <main id="page" class="page" aria-live="polite"></main>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <dialog id="dialog"></dialog>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

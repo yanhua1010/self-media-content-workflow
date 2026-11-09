@@ -47,6 +47,13 @@ CREATE TABLE IF NOT EXISTS contents (
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
+CREATE TABLE IF NOT EXISTS public_stats (
+  url TEXT PRIMARY KEY,
+  views INTEGER,
+  likes INTEGER,
+  comments INTEGER,
+  fetched_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS posts (
   id INTEGER PRIMARY KEY,
   content_id INTEGER NOT NULL REFERENCES contents(id),
