@@ -259,15 +259,30 @@ function editor(c) {
     <div class="grid g2" style="margin-top:12px">
       <label class="f">${isVideo ? '视频简介' : '正文（Markdown）'}<textarea id="e-body">${esc(c.body || '')}</textarea></label>
       <div><div class="f small" style="color:var(--ink-2);margin-bottom:5px">预览</div><div class="preview" id="e-preview">${md(c.body)}</div></div>
-    </div></div>`;
+    </div>
+    ${isVideo ? `<label class="f" style="margin-top:12px">X 同发文案（可选。和视频一起审核；不要放链接，带链接的帖子按 $0.20 计费，链接放评论）
+      <textarea id="e-xtext" style="min-height:110px">${esc(c.options.xText || '')}</textarea></label>
+      <div class="row small"><span class="muted" id="e-xcount"></span></div>` : ''}
+  </div>`;
+}
+const X_LINK = /https?:\/\/|www\.|\b[\w-]+\.(com|io|ai|dev|one|net|org|cn)\b/i;
+function xCount(text) {
+  // X counts CJK characters as 2.
+  const n = [...text].reduce((s, ch) => s + (/[ᄀ-￿]/.test(ch) ? 2 : 1), 0);
+  const warn = [n > 280 ? `超过 280（${n}），需要 X Premium 才能发长帖` : `${n} / 280`, X_LINK.test(text) ? '含链接，排期时会被拦下' : ''].filter(Boolean);
+  return warn.join(' · ');
 }
 function bindEditor(c) {
   const isVideo = c.platform === 'youtube';
   $('#e-body').addEventListener('input', (e) => { $('#e-preview').innerHTML = md(e.target.value); });
+  if (isVideo) {
+    const upd = () => { $('#e-xcount').textContent = xCount($('#e-xtext').value); };
+    $('#e-xtext').addEventListener('input', upd); upd();
+  }
   const save = async () => {
     const media = $('#e-media').value.trim();
     await api(`/contents/${c.id}`, { method: 'PUT', body: { title: $('#e-title').value.trim(), body: $('#e-body').value,
-      ...(isVideo ? { mediaPath: media || null } : { options: { cover: media || undefined } }) } });
+      ...(isVideo ? { mediaPath: media || null, options: { xText: $('#e-xtext').value.trim() } } : { options: { cover: media || undefined } }) } });
   };
   $('#e-save').addEventListener('click', guard(async () => { await save(); toast('已保存（如之前已批准，现在回到草稿）'); contentsPage(); }));
   $('#e-submit').addEventListener('click', guard(async () => { await save(); await api(`/contents/${c.id}/submit`, { method: 'POST' }); toast('已送审'); refreshReviewCount(); contentsPage(); }));
@@ -284,6 +299,8 @@ async function reviewPage() {
       <h3 style="font-size:20px;margin-top:10px">${esc(c.title || '（无标题）')}</h3>
       ${c.platform === 'youtube' ? `<p class="mono small">视频：${esc(c.media_path || '未设置')}</p>` : `<p class="mono small">封面：${esc(c.options.cover || '未设置')}</p>`}
       <div class="preview" style="max-height:340px">${md(c.body)}</div>
+      ${c.platform === 'youtube' && c.options.xText ? `<div class="f small" style="margin-top:12px;color:var(--ink-2)">X 同发文案 · ${esc(xCount(c.options.xText))}</div>
+        <div class="preview" style="max-height:200px;white-space:pre-wrap">${esc(c.options.xText)}</div>` : ''}
       <div class="row" style="margin-top:14px"><input type="text" placeholder="审核意见（退回时必填）" data-note="${c.id}" style="max-width:420px">
         <button class="btn ghost" data-reject="${c.id}">退回</button><button class="btn seal" data-approve="${c.id}">批准</button></div>
     </div>`).join('') : '<div class="empty">没有待审内容</div>') +
@@ -313,6 +330,7 @@ async function calendarPage() {
   const busy = new Set(posts.filter((p) => !['failed', 'cancelled', 'deleted'].includes(p.status)).map((p) => `${p.content_id}:${p.platform}`));
   const ready = contents.filter((c) => c.status === 'approved' && !busy.has(`${c.id}:${c.platform}`));
   const yt = (acc.data || []).filter((a) => a.platform === 'youtube');
+  const xs = (acc.data || []).filter((a) => a.platform === 'twitter' || a.platform === 'x');
   const def = new Date(Date.now() + 3600e3); def.setMinutes(0, 0, 0);
   const localValue = new Date(def.getTime() - def.getTimezoneOffset() * 6e4).toISOString().slice(0, 16);
 
@@ -330,7 +348,14 @@ async function calendarPage() {
         <div class="f small" style="margin-top:10px">是否面向儿童（YouTube 要求明确选择）</div>
         <div class="choice"><label><input type="radio" name="kids-${c.id}" value="false"><span>不是</span></label><label><input type="radio" name="kids-${c.id}" value="true"><span>是</span></label></div>
         <label class="row small" style="margin-top:10px"><input type="checkbox" data-k="ai"> 含 AI 生成的逼真内容（YouTube 会加标注）</label>
-        <div class="row" style="margin-top:14px"><span class="muted small">发布成功后计费，每条约 $0.01</span><span class="spacer"></span><button class="btn seal" data-go-yt="${c.id}">排期</button></div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--rule)">
+          ${xs.length && c.options.xText ? `<label class="row small"><input type="checkbox" data-k="x"> 同一个请求，把这条视频也发到 X
+            <select data-k="xacc" style="width:auto">${xs.map((a) => `<option value="${esc(a.id)}">@${esc(a.username)}</option>`).join('')}</select></label>
+            <div class="preview small" style="margin-top:8px;max-height:120px;white-space:pre-wrap;padding:10px 12px">${esc(c.options.xText)}</div>
+            <div class="muted small" style="margin-top:4px">X 上公开可见，不能设私密 · 已审核的文案 · ${esc(xCount(c.options.xText))}</div>`
+            : `<span class="muted small">${xs.length ? '这条内容没有 X 文案，要同发先在「内容」里写好并重新送审。' : '还没连接 X 账号。'}</span>`}
+        </div>
+        <div class="row" style="margin-top:14px"><span class="muted small">发布成功后计费：YouTube 约 $0.01，X 约 $0.015</span><span class="spacer"></span><button class="btn seal" data-go-yt="${c.id}">排期</button></div>
       </div>` : `<div class="card">
         <div class="row"><span class="lane write">微信官方接口</span><span class="tag ink">公众号</span></div>
         <h3 style="margin-top:10px">${esc(c.title)}</h3>
@@ -358,12 +383,20 @@ async function calendarPage() {
     if (!kids) throw new Error('请明确选择「是否面向儿童」');
     const at = new Date(card.querySelector('[data-k="at"]').value);
     if (!(at > new Date(Date.now() + 60e3))) throw new Error('发布时间需要至少晚于现在 1 分钟');
-    const ok = await confirmBox('确认排期', `<p><b>${esc(byId[id].title)}</b></p><p class="mono small">${fmtDate(at.toISOString(), true)} · ${vis === 'public' ? '公开' : vis === 'unlisted' ? '不公开' : '私密'} · 面向儿童：${kids === 'true' ? '是' : '否'}</p><p class="muted small">视频会先上传到 AIsa，到点后由发布通道推送到 YouTube。</p>`, '排期');
+    const withX = card.querySelector('[data-k="x"]')?.checked;
+    const xAcc = withX ? card.querySelector('[data-k="xacc"]').value : null;
+    const xName = withX ? card.querySelector('[data-k="xacc"]').selectedOptions[0].textContent : '';
+    const ok = await confirmBox(withX ? '确认排期：YouTube + X' : '确认排期', `<p><b>${esc(byId[id].title)}</b></p>
+      <p class="mono small">${fmtDate(at.toISOString(), true)}</p>
+      <p class="small">YouTube：${vis === 'public' ? '公开' : vis === 'unlisted' ? '不公开' : '私密'} · 面向儿童：${kids === 'true' ? '是' : '否'}</p>
+      ${withX ? `<p class="small">X ${esc(xName)}：<b>公开发布</b>，同一条视频 + 已审核的文案</p>` : ''}
+      <p class="muted small">视频先上传到 AIsa，到点后由发布通道推送${withX ? '，每个平台各自返回结果' : '到 YouTube'}。</p>`, '排期');
     if (!ok) return;
     b.disabled = true; toast('上传视频中…');
     await api(`/contents/${id}/publish/youtube`, { method: 'POST', body: { accountId: card.querySelector('[data-k="account"]').value, visibility: vis,
-      madeForKids: kids === 'true', scheduledFor: at.toISOString(), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, containsSyntheticMedia: card.querySelector('[data-k="ai"]').checked } });
-    toast('已排期'); calendarPage(); refreshSpend();
+      madeForKids: kids === 'true', scheduledFor: at.toISOString(), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      containsSyntheticMedia: card.querySelector('[data-k="ai"]').checked, x: withX ? { accountId: xAcc } : null } });
+    toast(withX ? '已排期：YouTube + X' : '已排期'); calendarPage(); refreshSpend();
   })));
   page.querySelectorAll('[data-go-wx]').forEach((b) => b.addEventListener('click', guard(async () => {
     const id = b.dataset.goWx;

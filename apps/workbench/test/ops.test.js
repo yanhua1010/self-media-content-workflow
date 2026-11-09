@@ -34,7 +34,7 @@ test('approved content is scheduled once with explicit YouTube choices', async (
   ops.submitForReview(c.id);
   ops.review(c.id, { approve: true });
   await assert.rejects(ops.publishYoutube(c.id, { ...youtube, madeForKids: undefined }), /madeForKids/);
-  const post = await ops.publishYoutube(c.id, youtube);
+  const [post] = await ops.publishYoutube(c.id, youtube);
   assert.equal(post.remote_id, 'pst_TEST');
   assert.equal(post.status, 'scheduled');
   const [, body, opts] = aisa.calls.find((x) => x[0] === 'createPost');
@@ -85,4 +85,50 @@ test('WeChat draft needs approval and a cover, and never stores secrets', async 
   assert.equal(runs.length, 1);
   await assert.rejects(ops.publishWechat(c.id, { runner }), /already has a WeChat draft/);
   assert.equal(redact('secret: 0123456789abcdef0123'), 'secret: [redacted]');
+});
+
+test('YouTube + X go out in one request, X text must be approved and link-free', async () => {
+  const aisa = fakeAisa();
+  const ops = createOps({ db: openDb(':memory:'), aisa });
+  const approve = (id) => { ops.submitForReview(id); ops.review(id, { approve: true }); };
+  const c = ops.addContent({ platform: 'youtube', title: 't', body: 'yt desc', mediaPath: '/tmp/v.mp4' });
+  approve(c.id);
+  const x = { accountId: 'acc_XX' };
+  await assert.rejects(ops.publishYoutube(c.id, { ...youtube, x }), /no X text/);
+
+  ops.updateContent(c.id, { options: { xText: '看这里 https://example.com' } });
+  approve(c.id);
+  await assert.rejects(ops.publishYoutube(c.id, { ...youtube, x }), /link/);
+
+  ops.updateContent(c.id, { options: { xText: '我搭了一个内容值班台' } });
+  assert.equal(ops.getContent(c.id).status, 'draft');
+  await assert.rejects(ops.publishYoutube(c.id, { ...youtube, x }), /approve/);
+  approve(c.id);
+  assert.equal(aisa.calls.length, 0);
+
+  const rows = await ops.publishYoutube(c.id, { ...youtube, x });
+  const creates = aisa.calls.filter((k) => k[0] === 'createPost');
+  assert.equal(creates.length, 1);
+  const [, body, opts] = creates[0];
+  assert.deepEqual(body.platforms.map((t) => t.platform), ['youtube', 'twitter']);
+  assert.equal(body.platforms[1].customContent, '我搭了一个内容值班台');
+  assert.equal(body.platforms[1].accountId, 'acc_XX');
+  assert.equal(body.content, 'yt desc');
+  assert.ok(opts.maxPriceUsd >= 0.025);
+  assert.deepEqual(rows.map((r) => r.platform), ['youtube', 'twitter']);
+  assert.ok(rows.every((r) => r.remote_id === 'pst_TEST'));
+  await assert.rejects(ops.publishYoutube(c.id, { ...youtube, x }), /already has YouTube post/);
+});
+
+test('refresh tracks each platform target of a shared post separately', async () => {
+  const aisa = { ...fakeAisa(), getPost: async () => ({ data: { id: 'pst_TEST', status: 'partial', platforms: [
+    { platform: 'youtube', accountId: 'acc_X', status: 'published', platformPostUrl: 'https://youtube.com/watch?v=1' },
+    { platform: 'twitter', accountId: 'acc_XX', status: 'failed', error: { message: 'x' } }] } }) };
+  const ops = createOps({ db: openDb(':memory:'), aisa });
+  const c = ops.addContent({ platform: 'youtube', title: 't', mediaPath: '/tmp/v.mp4', options: { xText: 'hi' } });
+  ops.submitForReview(c.id); ops.review(c.id, { approve: true });
+  const [yt, xp] = await ops.publishYoutube(c.id, { ...youtube, x: { accountId: 'acc_XX' } });
+  assert.equal((await ops.refreshPost(yt.id)).status, 'published');
+  assert.equal((await ops.refreshPost(yt.id)).url, 'https://youtube.com/watch?v=1');
+  assert.equal((await ops.refreshPost(xp.id)).status, 'failed');
 });

@@ -18,6 +18,7 @@ content:submit <id>              move a draft into review
 content:review <id> --approve|--reject [--note N]   human decision only
 publish:youtube <id> --account acc_... --visibility private|unlisted|public
                 --made-for-kids true|false [--at ISO] [--tz Asia/Shanghai] [--ai]
+                [--x-account acc_...]   also post the same video on X with the approved options.xText
 post:refresh <localPostId>
 posts
 yt:channel --account acc_... [--from YYYY-MM-DD] [--to YYYY-MM-DD]
@@ -39,7 +40,7 @@ const { positionals, values } = parseArgs({
     at: { type: 'string' }, tz: { type: 'string' }, ai: { type: 'boolean' },
     from: { type: 'string' }, to: { type: 'string' }, video: { type: 'string' },
     en: { type: 'string' }, zh: { type: 'string' }, platforms: { type: 'string' },
-    budget: { type: 'string' }, days: { type: 'string' }, theme: { type: 'string' },
+    budget: { type: 'string' }, days: { type: 'string' }, theme: { type: 'string' }, 'x-account': { type: 'string' },
   },
 });
 
@@ -72,6 +73,7 @@ const commands = {
   'publish:youtube': () => ops.publishYoutube(Number(arg), {
     accountId: values.account, visibility: values.visibility, madeForKids: bool(values['made-for-kids']),
     scheduledFor: values.at || null, timezone: values.tz || 'Asia/Shanghai', containsSyntheticMedia: !!values.ai,
+    x: values['x-account'] ? { accountId: values['x-account'] } : null,
   }),
   'post:refresh': () => ops.refreshPost(Number(arg)),
   posts: () => ops.listPosts(),

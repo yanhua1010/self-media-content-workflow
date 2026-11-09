@@ -64,8 +64,9 @@ export function createOps({ db, aisa }) {
       return rowToContent(q.setStatus.get(approve ? 'approved' : 'rejected', note, approve ? now() : null, now(), id));
     },
 
-    // Publish or schedule one approved YouTube video through AIsa.
-    async publishYoutube(id, { accountId, scheduledFor = null, timezone = 'Asia/Shanghai', visibility, madeForKids, containsSyntheticMedia = false }) {
+    // Publish or schedule one approved video through AIsa: YouTube, plus optionally the same video on X
+    // in the same request. The X text comes from options.xText, so it was part of what the reviewer approved.
+    async publishYoutube(id, { accountId, scheduledFor = null, timezone = 'Asia/Shanghai', visibility, madeForKids, containsSyntheticMedia = false, x = null }) {
       const c = rowToContent(q.content.get(id));
       if (!c) throw new GateError(`content ${id} not found`);
       if (c.status !== 'approved') throw new GateError(`content ${id} is ${c.status}; approve it before publishing`);
@@ -77,22 +78,36 @@ export function createOps({ db, aisa }) {
       if (live) throw new GateError(`content ${id} already has YouTube post ${live.id} (${live.status}); cancel it first`);
       if (!['public', 'private', 'unlisted'].includes(visibility)) throw new GateError('visibility must be public, private or unlisted');
 
+      let xTarget = null;
+      if (x) {
+        const text = (c.options.xText || '').trim();
+        if (!x.accountId) throw new GateError('x.accountId is required');
+        if (!text) throw new GateError('no X text in this content; add it in the editor and get it approved first');
+        // AIsa bills an X post with a URL in its text at $0.20 instead of $0.015; links go in a reply instead.
+        if (/https?:\/\/|www\.|\b[\w-]+\.(com|io|ai|dev|one|net|org|cn)\b/i.test(text)) throw new GateError('X text contains a link; move links to a reply');
+        const liveX = q.activePost.get(id, 'twitter');
+        if (liveX) throw new GateError(`content ${id} already has X post ${liveX.id} (${liveX.status})`);
+        xTarget = { platform: 'twitter', accountId: x.accountId, customContent: text };
+      }
+
       const media = await aisa.uploadFile(c.media_path);
       const body = {
         content: c.body || '',
         title: c.title,
         mediaItems: [{ mediaId: media.mediaId, type: media.type }],
-        platforms: [{
-          platform: 'youtube',
-          accountId,
-          platformSpecificData: { title: c.title, visibility, madeForKids, containsSyntheticMedia },
-        }],
+        platforms: [
+          { platform: 'youtube', accountId, platformSpecificData: { title: c.title, visibility, madeForKids, containsSyntheticMedia } },
+          ...(xTarget ? [xTarget] : []),
+        ],
         ...(scheduledFor ? { scheduledFor, timezone } : { publishNow: true }),
       };
-      const idempotencyKey = createHash('sha256').update(`content:${id}:${scheduledFor || 'now'}:${accountId}`).digest('hex').slice(0, 40);
-      const { status, data } = await aisa.createPost(body, { idempotencyKey });
-      return q.insertPost.get(id, 'aisa', 'youtube', accountId, data?.id ?? null, data?.status ?? `http_${status}`,
-        scheduledFor, scheduledFor ? timezone : null, null, JSON.stringify(data));
+      const targetsKey = body.platforms.map((t) => `${t.platform}:${t.accountId}`).join(',');
+      const idempotencyKey = createHash('sha256').update(`content:${id}:${scheduledFor || 'now'}:${targetsKey}`).digest('hex').slice(0, 40);
+      // Cap covers every target in the request: $0.01 YouTube + $0.015 X, with headroom.
+      const { status, data } = await aisa.createPost(body, { idempotencyKey, maxPriceUsd: xTarget ? 0.08 : 0.05 });
+      // One local row per platform target; they share the AIsa post id and each tracks its own result.
+      return body.platforms.map((t) => q.insertPost.get(id, 'aisa', t.platform, t.accountId, data?.id ?? null,
+        data?.status ?? `http_${status}`, scheduledFor, scheduledFor ? timezone : null, null, JSON.stringify(data)));
     },
 
     // Pull the latest state of an AIsa post into the local row.
@@ -101,9 +116,11 @@ export function createOps({ db, aisa }) {
       if (!p) throw new GateError(`post ${localId} not found`);
       if (p.channel !== 'aisa' || !p.remote_id) return p;
       const { data } = await aisa.getPost(p.remote_id);
-      const target = (data?.platforms || []).find((t) => t.platform === p.platform) || {};
+      const target = (data?.platforms || []).find((t) => t.platform === p.platform && (!p.account_id || t.accountId === p.account_id)) || {};
       const url = target.platformPostUrl || target.url || null;
-      return q.updatePost.get(data?.status ?? p.status, url, JSON.stringify(data), now(), localId);
+      // A multi-platform post can be partial: each local row follows its own target's result.
+      const status = ['published', 'failed'].includes(target.status) ? target.status : (data?.status ?? p.status);
+      return q.updatePost.get(status, url, JSON.stringify(data), now(), localId);
     },
 
     // Any edit sends the content back to draft: an approval covers exactly what the person saw.

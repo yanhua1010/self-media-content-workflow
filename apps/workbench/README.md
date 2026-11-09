@@ -17,6 +17,7 @@ Seven pages: accounts, radar, topics, content, review, schedule, data. `npm star
 - `AISA_API_KEY` is read from the environment by the Node process only. It is never sent to the browser, written to the database or logged.
 - Nothing reaches a platform unless the content is `approved`. Approval is a human action (UI button or `content:review --approve`).
 - YouTube posts require an explicit `madeForKids` choice and a visibility. One active post per content and platform.
+- The same video can go to YouTube and X in one AIsa request. The X text lives in the content (`options.xText`), so it is reviewed with the video; links are refused because AIsa bills X posts with a URL at $0.20.
 - Every paid call carries `X-AISA-Max-Price-USD`; every AIsa call is logged in the `spend` table.
 - Radar is read-only, quoted first, and runs under a budget cap. Raw responses are kept under `data/radar/<time>/`.
 - Editing approved content sends it back to draft. WeChat output is redacted before it is stored.
